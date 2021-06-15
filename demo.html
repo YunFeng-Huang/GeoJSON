@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <style>
+        html,
+        body,
+        #container {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+         .amap-marker-label{
+         border: 0;
+         background-color: transparent;
+         
+         }
+       
+    </style>
+    <title>GeoJSON</title>
+    <!-- <link rel="stylesheet" href="//a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" /> -->
+    <script src="https://webapi.amap.com/maps?v=1.4.11&key=19b6ffb41d6c37ad488f0d57088e2ebd"></script>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+    <script src="./jquery-3.3.1.min.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script src="./com.js"></script>
+    <script type="text/javascript">
+        let obj = {
+            start: '',
+            end: '',
+        }
+        $.ajax({
+            type: "GET",
+            url: 'https://kybcrm-files.oss-cn-hangzhou.aliyuncs.com/prod/tesla/smart-scenic-v2-web/amcharts/1.json',
+            async: true,
+            contentType: "application/json",
+            dataType: "json",
+            success: ((geoJSON) => {
+                var geojson = new AMap.GeoJSON({
+                    geoJSON: geoJSON,
+                    getMarker: (geojson, lnglats) => {
+                        if (geojson.properties && geojson.properties.name) {
+                            let properties = geojson.properties;
+                            let marker;
+                            marker = _marker(geojson.properties.name,lnglats, defaultIcon0, {
+                                'id': geojson.properties.name,
+                                'type': 3 // 0 默认值  1 起点 2 终点
+                            })
+                            marker.setLabel({
+                            offset: new AMap.Pixel(10, 10), //设置文本标注偏移量
+                                content: `${geojson.properties.name}`, //设置文本标注内容
+                                direction: 'right' //设置文本标注方位
+                            });
+                            AMap.event.addListener(marker, 'click', (e) => {
+                                //创建右键菜单
+                                var contextMenu = new AMap.ContextMenu();
+                                let {
+                                    type,
+                                    id
+                                } = marker.getExtData()
+
+                                if (id == obj.start) obj.start = '';
+                                if (id == obj.end) obj.end = '';
+                                console.log(obj,id)
+                                type != 1 && !obj.start && contextMenu.addItem(
+                                    "设置为起点",
+                                    () => {
+                                        console.log("设置为起点", marker)
+                                        marker.setIcon(startIcon)
+                                        marker.setExtData({
+                                            type: 1,
+                                             'id': geojson.properties.name,
+                                        })
+                                        obj.start = id;
+                                    }, 0);
+
+                                type != 2 && !obj.end && contextMenu.addItem(
+                                    "设置为终点",
+                                    () => {
+
+                                        console.log("设置为终点", marker)
+                                        marker.setIcon(endIcon)
+                                        marker.setExtData({
+                                            type: 2,
+                                             'id': geojson.properties.name,
+                                        })
+                                        obj.end = id;
+                                    }, 1);
+
+                                type != 0 && contextMenu.addItem("设置为经过点",
+                                    () => {
+
+                                        console.log("设置为经过点", marker)
+                                        marker.setIcon(defaultIcon1)
+                                        marker.setExtData({
+                                            type: 0,
+                                             'id': geojson.properties.name,
+                                        })
+                                    }, 1);
+                                type != 3 && contextMenu.addItem("移除该锚点",
+                                    () => {
+
+                                        console.log("设置为经过点", marker)
+                                        marker.setIcon(defaultIcon0)
+                                        marker.setExtData({
+                                            type: 3,
+                                             'id': geojson.properties.name,
+                                        })
+                                    }, 1);
+                                contextMenu.open(map, e.lnglat);
+                            });
+                            return marker;
+                        }
+                        return;
+                    }
+                });
+                geojson.setMap(map);
+                console.log('GeoJSON 数据加载完成')
+            }),
+            fail: ((err) => {
+                console.log(err)
+            })
+        });
+    </script>
+</body>
+
+</html>

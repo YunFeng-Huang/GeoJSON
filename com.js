@@ -1,85 +1,181 @@
-var map = new AMap.Map('container', {
-    center: [121.6785192489624,
-        29.798011779785156
-    ],
-    zoom: 13,
-    // 'bg'（地图背景）、'point'（POI点）、'road'（道路）、'building'（建筑物）
-    // features:['bg','point']
-});
-console.log(map)
-// 创建一个 Icon
-var startIcon = new AMap.Icon({
-    // 图标尺寸
-    size: new AMap.Size(25, 34),
-    // 图标的取图地址
-    image: 'https://a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png',
-    // 图标所用图片大小
-    imageSize: new AMap.Size(135, 40),
-    // 图标取图偏移量
-    imageOffset: new AMap.Pixel(-9, -3)
-});
+var arr = []
+var obj = {
+    start: '',
+    end: '',
+}
 
-
-
-// 创建一个 icon
-var endIcon = new AMap.Icon({
-    size: new AMap.Size(25, 34),
-    image: 'https://a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png',
-    imageSize: new AMap.Size(135, 40),
-    imageOffset: new AMap.Pixel(-95, -3)
-});
-
-
-var defaultIcon1 = new AMap.Icon({
-    // 图标尺寸
-    size: new AMap.Size(25, 34),
-    // 图标的取图地址
-    image: 'https://a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png',
-    // 图标所用图片大小
-    imageSize: new AMap.Size(25, 34),
-    // 图标取图偏移量
-    // imageOffset: new AMap.Pixel(-9, -3)
-});
-
-var defaultIcon0 = new AMap.Icon({
-    // 图标尺寸
-    size: new AMap.Size(25, 34),
-    // 图标的取图地址
-    image: './dir-via-marker.png',
-    // 图标所用图片大小
-    imageSize: new AMap.Size(25, 34),
-    // 图标取图偏移量
-    // imageOffset: new AMap.Pixel(-9, -3)
-});
-// var marker = new AMap.Marker({
-//     position: lnglats,
-//     // 将一张图片的地址设置为 icon
-//     icon: icon,
-//     // 设置了 icon 以后，设置 icon 的偏移量，以 icon 的 [center bottom] 为原点
-//     offset: new AMap.Pixel(-13, -30)
-// });
-
-const _marker = (title,position, icon, extData) => {
-    return new AMap.Marker({
-        // content: title,
-        title:title,
-        position: position,
-        extData: extData,
-        icon: icon, // 添加 Icon 实例
-        offset: new AMap.Pixel(-13, -30),
+var addArr = (id, name) => {
+    // _riding_jump(id)
+    arr.push({
+        id,
+        name
     })
+    console.log(arr, 'addArr')
+    console.log(LineArr, 'LineArr')
+    let last = arr[arr.length - 1]
+
+   let lines = LineArr.filter(v=>{
+       return v.include && v.include.some(k=>{
+            return k.name == last.name;
+        })
+    })
+    console.log(lines,'lines')
+    // lines.map(v=>{
+    //     console.log(v,'v')
+    //     draw(v)
+        
+    // })
+
+
+    let lines1 = lines?.map((v, i) => {
+        const coordinates = v.geometry.coordinates
+        return {
+            "line_id": "110100010117" + i,
+            "line_name": v.properties.name,
+            "lnglat": coordinates
+        }
+    })
+    layer1.setData(lines1, {
+        lnglat: 'lnglat'
+    }).render();
+
+
+}
+var delArr = (id) => {
+    console.log(arr)
+    console.log(id)
+    let last = arr[arr.length - 1]
+    if (last.id != id) {
+        alert('只能删除最近添加的锚点')
+        return false;
+    } else {
+        riding.clear()
+        last.routeLine && last.routeLine.hide()
+        arr.splice(arr.length - 1, 1)
+        console.log(arr, 'delArr')
+
+        return true;
+    }
+    // arr = arr.filter(v => {
+    //     return v.id != id;
+    // })
 }
 
 
-    // geoJSON.features.map(v => {
-                //     AMap.convertFrom(v.geometry.coordinates, 'gps', function (status, result) {
-                //         if (result.info === 'ok') {
-                //             var lnglats = result.locations; // Array.<LngLat>
-                //             v.geometry.coordinates = lnglats;
-                //               a++;
-                //         }
-                //          if (status== 'complete') {
-                //             a++;
-                //          }
-                //     });
-                // })
+function changArr(type, coordinates, geojson) {
+    if (type == 3) {
+        const name = geojson.properties.name
+        addArr(coordinates, name)
+    } else {
+        return delArr(coordinates)
+    }
+
+    //     arr.length>1 && arr.reduce((v,k,i)=>{
+    //         _riding_jump(v.id, k.id)
+    //         return k;
+    //    }, arr[0])
+}
+
+
+var driving = new AMap.Driving({
+    map: map,
+    panel: "panel"
+});
+
+
+
+
+var _riding_jump = (last) => {
+    let start = arr[arr.length - 1]
+    //根据起终点坐标规划骑行路线
+    start && riding.search(start.id, last, function (status, result) {
+        // result即是对应的公交路线数据信息，相关数据结构文档请参考  https://lbs.amap.com/api/javascript-api/reference/route-search#m_RidingResult
+        if (status === 'complete') {
+            console.log('骑行路线数据查询成功', result)
+            if (result.routes && result.routes.length) {
+                drawRoute(result.routes[0])
+            }
+        } else {
+            console.log('骑行路线数据查询失败' + result)
+        }
+    });
+
+}
+
+var draw = (path) => {
+    // console.log(path, 'path')
+    // map.add(new AMap.Polyline({
+    //     path: path,
+    //     isOutline: true,
+    //     outlineColor: '#ffeeee',
+    //     borderWeight: 2,
+    //     strokeWeight: 5,
+    //     strokeColor: '#0091ff',
+    //     strokeOpacity: 0.9,
+    //     lineJoin: 'round'
+    // }));
+
+}
+
+
+
+
+
+// var _riding_jump = (p1, p2) => {
+//     //根据起终点坐标规划骑行路线
+//     riding.search(p1, p2, function (status, result) {
+//         console.log(result, 'result')
+//         // result即是对应的骑行路线数据信息，相关数据结构文档请参考  https://lbs.amap.com/api/javascript-api/reference/route-search#m_RidingResult
+//         if (status === 'complete') {
+
+//             if (result.routes && result.routes.length) {
+//                 drawRoute(result.routes[0])
+//             }
+//         }
+//     });
+
+// }
+
+
+
+
+
+
+//分组
+var LineArr; //所有的线
+let PointAll;//所有的岔路口
+function getGroup(geoJSON){
+     PointAll = geoJSON.features.filter(v => {
+        return v.geometry.type == 'Point' && v.properties.name
+    })
+
+     LineArr = geoJSON.features.filter(v => {
+        return v.geometry.type == 'LineString'
+    })
+
+    LineArr.map((e)=>{
+        PointAll.map((v)=>{
+            const p = v.geometry.coordinates;
+            const path = e.geometry.coordinates;
+            let dis = AMap.GeometryUtil.isPointOnLine(p, path,1000);
+            // let dis = AMap.GeometryUtil.distanceToSegment(p, path);
+            // console.log(dis,'dis')
+            if (dis){
+                let include = e?.include;
+                let item = {
+                    name: v.properties.name,
+                    coordinates: p
+                }
+                if (include){
+                    include.push(item)
+                }else{
+                    include = [item]
+                }
+                e.include = include;
+            }
+        })
+    })
+    console.log(LineArr,'LineArr')
+}
+
+

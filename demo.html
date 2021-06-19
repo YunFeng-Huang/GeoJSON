@@ -14,28 +14,32 @@
             padding: 0;
             margin: 0;
         }
-         .amap-marker-label{
-         border: 0;
-         background-color: transparent;
-         
-         }
-       
+
+        .amap-marker-label {
+            border: 0;
+            background-color: transparent;
+
+        }
     </style>
     <title>GeoJSON</title>
     <!-- <link rel="stylesheet" href="//a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" /> -->
-    <script src="https://webapi.amap.com/maps?v=1.4.11&key=19b6ffb41d6c37ad488f0d57088e2ebd"></script>
+    <script
+        src="https://webapi.amap.com/maps?v=1.4.11&key=19b6ffb41d6c37ad488f0d57088e2ebd&plugin=AMap.Riding,AMap.Driving">
+    </script>
+    <script src="https://webapi.amap.com/loca?v=1.3.2&key=19b6ffb41d6c37ad488f0d57088e2ebd"></script>
     <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
     <script src="./jquery-3.3.1.min.js"></script>
+    <script src="https://a.amap.com/Loca/static/mock/heatmapData.js"></script>
+    <script src="https://unpkg.com/gcoord/dist/gcoord.js"></script>
 </head>
 
 <body>
     <div id="container"></div>
+    <div id="panel"></div>
+    <script src="./map.js"></script>
     <script src="./com.js"></script>
+    <script src="./setMenu.js"></script>
     <script type="text/javascript">
-        let obj = {
-            start: '',
-            end: '',
-        }
         $.ajax({
             type: "GET",
             url: 'https://kybcrm-files.oss-cn-hangzhou.aliyuncs.com/prod/tesla/smart-scenic-v2-web/amcharts/1.json',
@@ -43,18 +47,56 @@
             contentType: "application/json",
             dataType: "json",
             success: ((geoJSON) => {
+                gcoord.transform(geoJSON, gcoord.WGS84, gcoord.GCJ02);
+                getGroup(geoJSON);
+                let LineStringArr = []
+                let filter_features = geoJSON.features.filter(v => {
+                    v.height = 0;
+                    if (v.geometry.coordinates && !Array.isArray(v.geometry.coordinates[0])) {
+                        v.height = v.geometry.coordinates[2] || 0;
+                    }
+                    if (v.geometry.type == 'LineString') {
+                        LineStringArr.push(v)
+                    }
+                    return v.geometry.type == 'Point'
+                })
+                // console.log(LineStringArr, 'LineStringArr');
+                // let lines = LineStringArr.map((v, i) => {
+                //     const coordinates = v.geometry.coordinates
+                //     return {
+                //         "line_id": "110100010117" + i,
+                //         "line_name": v.properties.name,
+                //         "lnglat": coordinates
+                //     }
+                // })
+                // layer1.setData(lines, {
+                //     lnglat: 'lnglat'
+                // }).render();
+
+
+                // layer.setData(filter_features, {
+                //     lnglat: (data) => {
+                //         const coordinates = data.value.geometry.coordinates;
+                //         return [coordinates[0], coordinates[1]];
+                //     },
+                //     value: "height",
+                // }).render();
+
+
                 var geojson = new AMap.GeoJSON({
                     geoJSON: geoJSON,
                     getMarker: (geojson, lnglats) => {
                         if (geojson.properties && geojson.properties.name) {
+                            const coordinates = geojson.geometry.coordinates
                             let properties = geojson.properties;
                             let marker;
-                            marker = _marker(geojson.properties.name,lnglats, defaultIcon0, {
-                                'id': geojson.properties.name,
-                                'type': 3 // 0 默认值  1 起点 2 终点
-                            })
+                            marker = _marker(geojson.properties.name, lnglats,
+                                defaultIcon0, {
+                                    'id': coordinates,
+                                    'type': 3 // 0 默认值  1 起点 2 终点
+                                })
                             marker.setLabel({
-                            offset: new AMap.Pixel(10, 10), //设置文本标注偏移量
+                                offset: new AMap.Pixel(-24, -26), //设置文本标注偏移量
                                 content: `${geojson.properties.name}`, //设置文本标注内容
                                 direction: 'right' //设置文本标注方位
                             });
@@ -65,64 +107,27 @@
                                     type,
                                     id
                                 } = marker.getExtData()
-
-                                if (id == obj.start) obj.start = '';
-                                if (id == obj.end) obj.end = '';
-                                console.log(obj,id)
-                                type != 1 && !obj.start && contextMenu.addItem(
-                                    "设置为起点",
-                                    () => {
-                                        console.log("设置为起点", marker)
-                                        marker.setIcon(startIcon)
-                                        marker.setExtData({
-                                            type: 1,
-                                             'id': geojson.properties.name,
-                                        })
-                                        obj.start = id;
-                                    }, 0);
-
-                                type != 2 && !obj.end && contextMenu.addItem(
-                                    "设置为终点",
-                                    () => {
-
-                                        console.log("设置为终点", marker)
-                                        marker.setIcon(endIcon)
-                                        marker.setExtData({
-                                            type: 2,
-                                             'id': geojson.properties.name,
-                                        })
-                                        obj.end = id;
-                                    }, 1);
-
-                                type != 0 && contextMenu.addItem("设置为经过点",
-                                    () => {
-
-                                        console.log("设置为经过点", marker)
-                                        marker.setIcon(defaultIcon1)
-                                        marker.setExtData({
-                                            type: 0,
-                                             'id': geojson.properties.name,
-                                        })
-                                    }, 1);
-                                type != 3 && contextMenu.addItem("移除该锚点",
-                                    () => {
-
-                                        console.log("设置为经过点", marker)
-                                        marker.setIcon(defaultIcon0)
-                                        marker.setExtData({
-                                            type: 3,
-                                             'id': geojson.properties.name,
-                                        })
-                                    }, 1);
-                                contextMenu.open(map, e.lnglat);
+                               setMenu(obj, contextMenu, marker, coordinates,type,id,e.lnglat,geojson);
                             });
                             return marker;
                         }
                         return;
+                    },
+                    getPolyline: (geojson, lnglats) => {
+                        return new AMap.Polyline({
+                             path: lnglats,
+                             strokeWeight: 3,
+                             strokeOpacity: 0.2,
+                            //  bubble: true,
+                        })
                     }
                 });
                 geojson.setMap(map);
                 console.log('GeoJSON 数据加载完成')
+                // setTimeout(() => {
+                //     map.setFitView(null, false, [150, 60, 100, 60]);
+                // }, 2000)
+
             }),
             fail: ((err) => {
                 console.log(err)

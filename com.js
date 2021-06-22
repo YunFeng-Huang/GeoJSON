@@ -12,32 +12,32 @@ var addArr = (id, name) => {
     })
     console.log(arr, 'addArr')
     console.log(LineArr, 'LineArr')
-    let last = arr[arr.length - 1]
+    //     let last = arr[arr.length - 1]
 
-   let lines = LineArr.filter(v=>{
-       return v.include && v.include.some(k=>{
-            return k.name == last.name;
-        })
-    })
-    console.log(lines,'lines')
-    // lines.map(v=>{
-    //     console.log(v,'v')
-    //     draw(v)
-        
-    // })
+    //    let lines = LineArr.filter(v=>{
+    //        return v.include && v.include.some(k=>{
+    //             return k.name == last.name;
+    //         })
+    //     })
+    //     console.log(lines,'lines')
+    //     // lines.map(v=>{
+    //     //     console.log(v,'v')
+    //     //     draw(v)
+
+    //     // })
 
 
-    let lines1 = lines?.map((v, i) => {
-        const coordinates = v.geometry.coordinates
-        return {
-            "line_id": "110100010117" + i,
-            "line_name": v.properties.name,
-            "lnglat": coordinates
-        }
-    })
-    layer1.setData(lines1, {
-        lnglat: 'lnglat'
-    }).render();
+    //     let lines1 = lines?.map((v, i) => {
+    //         const coordinates = v.geometry.coordinates
+    //         return {
+    //             "line_id": "110100010117" + i,
+    //             "line_name": v.properties.name,
+    //             "lnglat": coordinates
+    //         }
+    //     })
+    //     layer1.setData(lines1, {
+    //         lnglat: 'lnglat'
+    //     }).render();
 
 
 }
@@ -62,10 +62,11 @@ var delArr = (id) => {
 }
 
 
-function changArr(type, coordinates, geojson) {
+function changArr(type, coordinates) {
+    start_planning(type, coordinates)
     if (type == 3) {
-        const name = geojson.properties.name
-        addArr(coordinates, name)
+        // const name = geojson.properties.name
+        addArr(coordinates, '')
     } else {
         return delArr(coordinates)
     }
@@ -144,38 +145,109 @@ var draw = (path) => {
 //分组
 var LineArr; //所有的线
 let PointAll;//所有的岔路口
-function getGroup(geoJSON){
-     PointAll = geoJSON.features.filter(v => {
-        return v.geometry.type == 'Point' && v.properties.name
-    })
+function getGroup(geoJSON) {
+    //  PointAll = geoJSON.features.filter(v => {
+    //     return v.geometry.type == 'Point'
+    // })
+    LineArr = [];
+    PointAll = [];
 
-     LineArr = geoJSON.features.filter(v => {
+    LineArr = geoJSON.features.filter(v => {
         return v.geometry.type == 'LineString'
     })
-
-    LineArr.map((e)=>{
-        PointAll.map((v)=>{
-            const p = v.geometry.coordinates;
+    LineArr.map((v, i) => {
+        const coordinates = v.geometry.coordinates
+        PointAll = [...PointAll, coordinates[0], coordinates[coordinates.length -1]]
+    })
+    LineArr.map((e) => {
+        PointAll.map((p) => {
             const path = e.geometry.coordinates;
-            let dis = AMap.GeometryUtil.isPointOnLine(p, path,1000);
+            let dis = AMap.GeometryUtil.isPointOnLine(p, path, 500);
             // let dis = AMap.GeometryUtil.distanceToSegment(p, path);
             // console.log(dis,'dis')
-            if (dis){
+            if (dis) {
                 let include = e?.include;
-                let item = {
-                    name: v.properties.name,
-                    coordinates: p
-                }
-                if (include){
-                    include.push(item)
-                }else{
-                    include = [item]
+                if (include) {
+                    include.push(p)
+                } else {
+                    include = [p]
                 }
                 e.include = include;
             }
         })
     })
-    console.log(LineArr,'LineArr')
+    console.log(LineArr, 'LineArr')
 }
 
 
+
+
+// 终点和起点直接所有的可能
+
+function AllMaybe(points, line) {
+    // for (let i; i < points.l i++;)
+    // points.forEach((element,i) => {
+    //     if()
+    // });
+    const length = points.length;
+}
+
+// 开始规划路线
+function start_planning(type, coordinates) {
+    // let startPoint;
+    let lines = []
+    let points = []
+    LineArr.map((v) => {
+        const in_point = JSON.stringify(v.include);
+        const current_point = JSON.stringify(coordinates);
+// 这里要先对点位排序，参考点线段两端任选一点
+        // selectionSort(arr)
+
+
+        //点在线上
+        if (in_point.includes(current_point)) {
+            console.log(v, 'v', current_point)
+            const inc = v.include;
+            // 获取相邻点位 成立条件点位按远近排序
+            inc.map((k, i) => {
+                if (JSON.stringify(k) == current_point){
+                    const left_point = i - 1 >= 0 ? inc[i - 1] : null;
+                    const right_point = i + 1 <= inc.length-1 ? inc[i + 1] : null;
+                    console.log(left_point, right_point)
+                    left_point && points.push(left_point)
+                    right_point && points.push(right_point)
+                }
+            })
+        }
+    })
+    console.log(points, 'points')
+    let markerList = points.map(v=>{
+        return _marker('', v,
+            defaultIcon1, {
+            'id': v,
+            'type': 3 
+        });
+    })
+    console.log(markerList,'markerList')
+    map.add(markerList);
+
+
+}
+
+
+function selectionSort(arr) {
+    varlen = arr.length;
+    varminIndex, temp;
+    for (vari = 0; i < len - 1; i++) {
+        minIndex = i;
+        for (varj = i + 1; j < len; j++) {
+            if (arr[j] < arr[minIndex]) {    // 寻找最小的数
+                minIndex = j;                // 将最小数的索引保存
+            }
+        }
+        temp = arr[i];
+        arr[i] = arr[minIndex];
+        arr[minIndex] = temp;
+    }
+    returnarr;
+}

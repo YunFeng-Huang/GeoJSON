@@ -1,5 +1,7 @@
 var map = new AMap.Map('container', {
-    center: [121.67437917552888, 29.757456528022885],
+    // center: [121.67437917552888, 29.757456528022885],
+    // center: [121.67746768675849, 29.797649656150444, 18.88],
+   center :[121.67746676281693, 29.797647558677987, 1.92],
     features: ['bg', 'road'],
     // mapStyle: 'amap://styles/midnight',
     // pitch: 50,
@@ -33,7 +35,7 @@ var layer1 = new Loca.LineLayer({
     // zIndex:201
 }).setOptions({
     style: {
-        borderWidth: 6,
+        borderWidth: 4,
         opacity: 1,
         color: function (v) {
             var id = v.value.line_id;
@@ -118,7 +120,7 @@ var defaultIcon0 = new AMap.Icon({
 // });
 
 var _marker = (title, position, icon, extData) => {
-    return new AMap.Marker({
+    let marker = new AMap.Marker({
         // content: title,
         title: title,
         position: position,
@@ -126,6 +128,15 @@ var _marker = (title, position, icon, extData) => {
         icon: icon, // 添加 Icon 实例
         offset: new AMap.Pixel(-13, -30),
     })
+    marker.setLabel({
+        offset: new AMap.Pixel(-24, -26), //设置文本标注偏移量
+        content: extData.id, //设置文本标注内容
+        direction: 'right' //设置文本标注方位
+    });
+    AMap.event.addListener(marker, 'click', (e) => {
+        setMenu(marker, position, e.lnglat);
+    });
+    return marker;
 }
 
 
@@ -150,7 +161,7 @@ function drawRoute(route) {
         isOutline: true,
         outlineColor: '#ffeeee',
         borderWeight: 2,
-        strokeWeight: 5,
+        strokeWeight: 4,
         strokeColor: '#0091ff',
         strokeOpacity: 0.9,
         lineJoin: 'round',
@@ -177,15 +188,3 @@ function parseRouteToPath(route) {
 
     return path
 }
-//     // geoJSON.features.map(v => {
-//                 //     AMap.convertFrom(v.geometry.coordinates, 'gps', function (status, result) {
-//                 //         if (result.info === 'ok') {
-//                 //             var lnglats = result.locations; // Array.<LngLat>
-//                 //             v.geometry.coordinates = lnglats;
-//                 //               a++;
-//                 //         }
-//                 //          if (status== 'complete') {
-//                 //             a++;
-//                 //          }
-//                 //     });
-//                 // })

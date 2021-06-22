@@ -1,4 +1,12 @@
-function setMenu(obj, contextMenu, marker, coordinates, type, id, lnglat, geojson) {
+function setMenu(marker, coordinates,lnglat) {
+    let {
+        type,
+        id
+    } = marker.getExtData()
+
+    //创建右键菜单
+    var contextMenu = new AMap.ContextMenu();
+
 
     const reset = () => {
         if (id == obj.start) obj.start = '';
@@ -16,7 +24,8 @@ function setMenu(obj, contextMenu, marker, coordinates, type, id, lnglat, geojso
                 })
                 reset()
                 obj.start = id;
-                changArr(type, coordinates, geojson)
+                changArr(type, coordinates)
+                // start_planning(type, coordinates)
             }, 0);
     } else {
         type != 0 && contextMenu.addItem("设置为经过点",
@@ -29,7 +38,7 @@ function setMenu(obj, contextMenu, marker, coordinates, type, id, lnglat, geojso
                     'id': coordinates,
                 })
                 reset()
-                changArr(type, coordinates, geojson)
+                changArr(type, coordinates)
                 // _riding_jump(obj.start, obj.end)
 
             }, 1);
@@ -45,13 +54,13 @@ function setMenu(obj, contextMenu, marker, coordinates, type, id, lnglat, geojso
                 })
                 reset()
                 obj.end = id;
-                changArr(type, coordinates, geojson)
+                changArr(type, coordinates)
             }, 1);
 
         type != 3 && contextMenu.addItem("移除该锚点",
             () => {
                 // console.log(changArr(type, coordinates, geojson))
-                if (changArr(type, coordinates, geojson)) {
+                if (changArr(type, coordinates)) {
                     marker.setIcon(defaultIcon0)
                     marker.setExtData({
                         type: 3,
@@ -66,3 +75,11 @@ function setMenu(obj, contextMenu, marker, coordinates, type, id, lnglat, geojso
     contextMenu.open(map, lnglat);
 
 }
+
+
+
+// function setMarker(marker, coordinates){
+//     AMap.event.addListener(marker, 'click', (e) => {
+//         setMenu(marker, coordinates,  e.lnglat);
+//     });
+// }

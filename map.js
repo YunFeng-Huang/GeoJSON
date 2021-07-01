@@ -27,8 +27,8 @@ var layer = new Loca.HeatmapLayer({
         },
     },
 });
-var colors = ['#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00'];
-// , '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00'
+var colors = ['#fb9a99'];
+// , '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00'，, '#e31a1c', '#fdbf6f', '#ff7f00'
 
 var layer1 = new Loca.LineLayer({
     map: map,
@@ -89,12 +89,22 @@ var endIcon = new AMap.Icon({
     imageOffset: new AMap.Pixel(-95, -3)
 });
 
-
 var defaultIcon1 = new AMap.Icon({
     // 图标尺寸
     size: new AMap.Size(25, 34),
     // 图标的取图地址
     image: 'https://a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png',
+    // 图标所用图片大小
+    imageSize: new AMap.Size(25, 34),
+    // 图标取图偏移量
+    // imageOffset: new AMap.Pixel(-9, -3)
+});
+
+var defaultIcon2 = new AMap.Icon({
+    // 图标尺寸
+    size: new AMap.Size(25, 34),
+    // 图标的取图地址
+    image: './dir-via-marker1.png',
     // 图标所用图片大小
     imageSize: new AMap.Size(25, 34),
     // 图标取图偏移量
@@ -118,7 +128,7 @@ var defaultIcon0 = new AMap.Icon({
 //     // 设置了 icon 以后，设置 icon 的偏移量，以 icon 的 [center bottom] 为原点
 //     offset: new AMap.Pixel(-13, -30)
 // });
-
+var markersList=[]
 var _marker = (title, position, icon, extData) => {
     let marker = new AMap.Marker({
         // content: title,
@@ -130,12 +140,15 @@ var _marker = (title, position, icon, extData) => {
     })
     marker.setLabel({
         offset: new AMap.Pixel(-24, -26), //设置文本标注偏移量
-        content: extData.id, //设置文本标注内容
+        content: title, //设置文本标注内容
         direction: 'right' //设置文本标注方位
     });
     AMap.event.addListener(marker, 'click', (e) => {
         setMenu(marker, position, e.lnglat);
     });
+    // type 0默认点  1起点 2终点 3 经过点 4 分支点
+    extData.type == 4 && markersList.push(marker);
+
     return marker;
 }
 
@@ -151,10 +164,14 @@ var ridingOption = {
 
 }
 var riding = new AMap.Riding(ridingOption)
-
+ //构造路线导航类
+ var driving = new AMap.Driving({
+    map: map,
+    panel: "panel"
+}); 
 
 function drawRoute(route) {
-    let last = arr[arr.length - 1]
+    // let last = arr[arr.length - 1]
     var path = parseRouteToPath(route)
     var routeLine = new AMap.Polyline({
         path: path,
@@ -166,7 +183,7 @@ function drawRoute(route) {
         strokeOpacity: 0.9,
         lineJoin: 'round',
     })
-    last.routeLine = routeLine;
+    // last.routeLine = routeLine;
     map.add(routeLine);
     // 调整视野达到最佳显示区域
     // map.setFitView([ routeLine])
@@ -175,16 +192,19 @@ function drawRoute(route) {
 
 // // 解析RidingRoute对象，构造成AMap.Polyline的path参数需要的格式
 // // RidingResult对象结构参考文档 https://lbs.amap.com/api/javascript-api/reference/route-search#m_RideRoute
-function parseRouteToPath(route) {
-    var path = []
+// function parseRouteToPath(route) {
+//     var path = []
 
-    for (var i = 0, l = route.rides.length; i < l; i++) {
-        var step = route.rides[i]
+//     for (var i = 0, l = route.rides.length; i < l; i++) {
+//         var step = route.rides[i]
 
-        for (var j = 0, n = step.path.length; j < n; j++) {
-            path.push(step.path[j])
-        }
-    }
+//         for (var j = 0, n = step.path.length; j < n; j++) {
+//             path.push(step.path[j])
+//         }
+//     }
 
-    return path
-}
+//     return path
+// }
+
+
+

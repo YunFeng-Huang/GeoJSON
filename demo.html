@@ -24,7 +24,7 @@
     <title>GeoJSON</title>
     <!-- <link rel="stylesheet" href="//a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" /> -->
     <script
-        src="https://webapi.amap.com/maps?v=1.4.11&key=19b6ffb41d6c37ad488f0d57088e2ebd&plugin=AMap.Riding,AMap.Driving">
+        src="https://webapi.amap.com/maps?v=1.4.11&key=19b6ffb41d6c37ad488f0d57088e2ebd&plugin=AMap.Riding,AMap.Driving,AMap.Walking">
     </script>
     <script src="https://webapi.amap.com/loca?v=1.3.2&key=19b6ffb41d6c37ad488f0d57088e2ebd"></script>
     <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
@@ -40,6 +40,23 @@
     <script src="./com.js"></script>
     <script src="./setMenu.js"></script>
     <script type="text/javascript">
+    // function _navigation(){
+    //     $.ajax({
+    //         type: "GET",
+    //         url: 'https://uri.amap.com/navigation?from=116.478346,39.997361,startpoint&to=116.3246,39.966577,endpoint&via=116.402796,39.936915,midwaypoint&mode=car&policy=1&src=mypage&coordinate=gaode&callnative=0',
+    //         async: true,
+    //         contentType: "application/json",
+    //         dataType: "json",
+    //         success: ((res) => {
+    //             console.log(res)
+
+    //         }),
+    //         fail: ((err) => {
+    //             console.log(err)
+    //         })
+    //     });
+    // }
+    
         $.ajax({
             type: "GET",
             url: 'https://kybcrm-files.oss-cn-hangzhou.aliyuncs.com/prod/tesla/smart-scenic-v2-web/amcharts/1.json',
@@ -48,53 +65,10 @@
             dataType: "json",
             success: ((geoJSON) => {
                 gcoord.transform(geoJSON, gcoord.WGS84, gcoord.GCJ02);
+                
+                //  LineStringArr = []
+               
                 getGroup(geoJSON);
-                let LineStringArr = []
-                let filter_features = geoJSON.features.filter(v => {
-                    v.height = 0;
-                    if (v.geometry.coordinates && !Array.isArray(v.geometry.coordinates[0])) {
-                        v.height = v.geometry.coordinates[2] || 0;
-                    }
-                    if (v.geometry.type == 'LineString') {
-                        LineStringArr.push(v)
-                    }
-                    return v.geometry.type == 'Point'
-                })
-                // console.log(LineStringArr, 'LineStringArr');
-                // 多个点实例组成的数组
-                var markerList = [];
-                let lines = LineStringArr.map((v, i) => {
-                    const coordinates = v.geometry.coordinates
-                    // // 创建一个 Marker 实例：
-                    const startMarker = _marker('', coordinates[0],
-                        defaultIcon0, {
-                            'id': coordinates[0],
-                            'type': 3 // 0 默认值 1 起点 2 终点
-                        });
-
-                    const endMarker = _marker('', coordinates[coordinates.length -
-                            1],
-                        defaultIcon0, {
-                            'id': coordinates[coordinates.length -
-                                1],
-                            'type': 3 // 0 默认值 1 起点 2 终点
-                        });
-                    // setMarker(startMarker,coordinates[0])
-                    // setMarker(endMarker,coordinates[coordinates.length - 1])
-                    markerList = [...markerList, startMarker, endMarker]
-                    return {
-                        "line_id": "110100010117" + i,
-                        "line_name": v.properties.name,
-                        "lnglat": coordinates
-                    }
-                })
-                layer1.setData(lines, {
-                    lnglat: 'lnglat'
-                }).render();
-
-
-
-                map.add(markerList);
 
                 // layer.setData(filter_features, {
                 //     lnglat: (data) => {
@@ -108,31 +82,31 @@
                 // var geojson = new AMap.GeoJSON({
                 //     geoJSON: geoJSON,
                 //     getMarker: (geojson, lnglats) => {
-                //         if (geojson.properties && geojson.properties.name) {
-                //             const coordinates = geojson.geometry.coordinates
-                //             let properties = geojson.properties;
-                //             let marker;
-                //             marker = _marker(geojson.properties.name, lnglats,
-                //                 defaultIcon0, {
-                //                     'id': coordinates,
-                //                     'type': 3 // 0 默认值  1 起点 2 终点
-                //                 })
-                //             marker.setLabel({
-                //                 offset: new AMap.Pixel(-24, -26), //设置文本标注偏移量
-                //                 content: `${geojson.properties.name}`, //设置文本标注内容
-                //                 direction: 'right' //设置文本标注方位
-                //             });
-                //             AMap.event.addListener(marker, 'click', (e) => {
-                //                 //创建右键菜单
-                //                 var contextMenu = new AMap.ContextMenu();
-                //                 let {
-                //                     type,
-                //                     id
-                //                 } = marker.getExtData()
-                //                setMenu(obj, contextMenu, marker, coordinates,type,id,e.lnglat,geojson);
-                //             });
-                //             return marker;
-                //         }
+                //         // if (geojson.properties && geojson.properties.name) {
+                //         //     // const coordinates = geojson.geometry.coordinates
+                //         //     // let properties = geojson.properties;
+                //         //     // let marker;
+                //         //     // marker = _marker(geojson.properties.name, lnglats,
+                //         //     //     defaultIcon0, {
+                //         //     //         'id': coordinates,
+                //         //     //         'type': 3 // 0 默认值  1 起点 2 终点
+                //         //     //     })
+                //         //     // marker.setLabel({
+                //         //     //     offset: new AMap.Pixel(-24, -26), //设置文本标注偏移量
+                //         //     //     content: `${geojson.properties.name}`, //设置文本标注内容
+                //         //     //     direction: 'right' //设置文本标注方位
+                //         //     // });
+                //         //     // AMap.event.addListener(marker, 'click', (e) => {
+                //         //     //     //创建右键菜单
+                //         //     //     var contextMenu = new AMap.ContextMenu();
+                //         //     //     let {
+                //         //     //         type,
+                //         //     //         id
+                //         //     //     } = marker.getExtData()
+                //         //     //    setMenu(obj, contextMenu, marker, coordinates,type,id,e.lnglat,geojson);
+                //         //     // });
+                //         //     return marker;
+                //         // }
                 //         return;
                 //     },
                 //     getPolyline: (geojson, lnglats) => {

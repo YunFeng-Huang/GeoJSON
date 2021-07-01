@@ -4,7 +4,7 @@ var obj = {
 }
 var routeList=[];
 
-var isPointOnLineValue =50
+var isPointOnLineValue =30
 // var arr = []
 
 // var addArr = (id, name) => {
@@ -240,14 +240,8 @@ function AllMaybe(points, line) {
 
 // 开始规划路线
 function start_planning(type, p) {
-    console.log(p,'p')
-    // let startPoint;
-    // let lines = []
-    // let points = []
     selectLine=[];
     lines.map((v, i) => {
-        // console.log(v,'v')
-        // const in_point = JSON.stringify(v.include);
         const path = v.lnglat;
         if(v.start == p){
             draw(path);
@@ -256,74 +250,7 @@ function start_planning(type, p) {
             draw(path);
             selectLine.push(path);
         }
-        
-//         let dis = AMap.GeometryUtil.isPointOnLine(p, path, 500);
-// if(dis){
-
-//     // routeList.map((k,l)=>{
-//     //     if(k==p){
-//     //         routeList[l-1];
-//     //     }
-//     // })
-// }
-        //点在线上
-        // if (in_point.includes(current_point)) {
-        //     console.log(v, 'v', current_point)
-        //     // const path = v.geometry.coordinates
-
-        //     // 获取相邻点位 成立条件点位按远近排序
-        //     // inc.map((k, i) => {
-        //     //     // if (JSON.stringify(k) == current_point){
-        //     //     //     const left_point = i - 1 >= 0 ? inc[i - 1] : null;
-        //     //     //     const right_point = i + 1 <= inc.length-1 ? inc[i + 1] : null;
-        //     //     //     console.log(left_point, right_point)
-        //     //     //     left_point && points.push(left_point)
-        //     //     //     right_point && points.push(right_point)
-        //     //     // }
-        //     // })
-
-        //     //路径
-        //     // v.include.map(v=>{
-        //     //     let n_p = AMap.GeometryUtil.closestOnLine(v.p, path);
-        //     //     v.n_p = n_p
-        //     // })
-
-
-        //     //卡死
-        //     // let newInclude = []
-        //     // let include = v.include
-        //     // path.some((k, l) => {
-        //     //     arr.push(k)
-        //     //     include.some((v, i) => {
-        //     //         if (AMap.GeometryUtil.isPointOnLine(v.n_p, arr, 0)) {
-        //     //             newInclude.push(v)
-        //     //             include.splice(i,1)
-        //     //             return;
-        //     //         }
-        //     //     })
-                
-        //     // })
-        //     // v.include = newInclude
-
-
-         
-        //     // 这里对include 排序
-
-        //     // console.log(points, 'points')
-        //     let markerList = v.include.map((v, l) => {
-        //         return _marker(i + '-' + l, v.p,
-        //             defaultIcon1, {
-        //             'id': v.p,
-        //             'type': 4
-        //         });
-        //     })
-        //     map.add(markerList);
-
-        // }
     })
-
-
-
 }
 
 // {
@@ -347,4 +274,15 @@ function selectionSort(arr) {
         arr[minIndex] = temp;
     }
     return arr;
+}
+
+
+
+function showLoading() {
+    document.getElementById("over").style.display = "block";
+    document.getElementById("layout").style.display = "block";
+}
+function hideLoading() {
+    document.getElementById("over").style.display = "none";
+    document.getElementById("layout").style.display = "none";
 }

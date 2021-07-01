@@ -32,13 +32,13 @@ function setMenu(marker, coordinates, lnglat) {
     } else {
         type != 0 && contextMenu.addItem("设置为经过点",
             () => {
-
                 console.log("设置为经过点", marker)
-               
+                // showLoading();
                 // map.remove(markersList)
                 // 上一个点
                 let pre = routeList[routeList.length - 1];
                 console.log(selectLine, 'lines');
+                let allLines = [];
                 // 可以优话速度，先把点绑定在线上
                  selectLine.some(path => {
                     let a = AMap.GeometryUtil.isPointOnLine(coordinates, path, isPointOnLineValue)
@@ -47,6 +47,7 @@ function setMenu(marker, coordinates, lnglat) {
                     if (a && b) {
                         let line = []
                         let aline = []
+                        console.log(path.length);
                         path.some(v => {
                             line.push(v);
                             let c = AMap.GeometryUtil.isPointOnLine(coordinates, line, isPointOnLineValue)
@@ -59,12 +60,29 @@ function setMenu(marker, coordinates, lnglat) {
                                 }
                             }
                         })
-                      
-                        // postLines=[...postLines,...aline];
-                        draw1(aline)
-                        return true;
+                        allLines.push(aline);
                     }
                 })
+                if(allLines.length == 0){
+                    draw1(allLines[0]);
+                }else{
+                    let less = {
+                        value:null,
+                        line :null
+                    }
+                    allLines.map(v=>{
+                       let dis = AMap.GeometryUtil.distanceOfLine(v);
+                       if(less.value == null || less.value > dis){
+                            less = {
+                                value:dis,
+                                line :v
+                            }
+                       }
+                    })
+                    draw1(less.line);
+                }
+                
+                // hideLoading()
                 if (!selectLine.some(path => {
                     if (AMap.GeometryUtil.isPointOnLine(coordinates, path, isPointOnLineValue)) return true;
                 })) {
@@ -79,19 +97,7 @@ function setMenu(marker, coordinates, lnglat) {
                 reset()
                 nextPolyline.map(v => map.remove(v));
                 routeList.push(coordinates)
-                // draw1(routeList)
-
-                // selectLine.map(v=>{{
-                //     if(v==coordinates){
-
-                //     }
-                // })
-                // changArr(type, coordinates)
                 start_planning(type, coordinates)
-                // _riding_jump(obj.start, obj.end)
-                // _navigation(obj.start.slice(0,2), coordinates.slice(0,2))
-
-
             }, 1);
 
         type != 2 && !obj.end && contextMenu.addItem(
@@ -106,6 +112,7 @@ function setMenu(marker, coordinates, lnglat) {
                 reset()
                 obj.end = id;
                 routeList.push(coordinates)
+                
                 // changArr(type, coordinates)
             }, 1);
 
@@ -128,6 +135,7 @@ function setMenu(marker, coordinates, lnglat) {
 
 
 var draw1 = (path) => {
+    postLines.push(path);
     let Polyline = new AMap.Polyline({
         path: path,
         isOutline: true,
@@ -141,8 +149,20 @@ var draw1 = (path) => {
     })
     map.add(Polyline);
 }
-
-
+var draw2 = () => {
+    let Polyline = new AMap.Polyline({
+        path: postLines,
+        isOutline: true,
+        outlineColor: '#ffeeee',
+        borderWeight: 2,
+        strokeWeight: 5,
+        strokeColor: 'blue',
+        strokeOpacity: 0.9,
+        // lineJoin: 'round',
+        zIndex: 52,
+    })
+    map.add(Polyline);
+}
 
 //   function _navigation(origin,destination){
 //       let show_fields = {

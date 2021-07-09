@@ -45,28 +45,24 @@ var layer1 = new Loca.LineLayer({
     }
 });
 
-// layer.setData(heatmapData, {
-//     lnglat: function (data) {
-//         return [data.value.lng, data.value.lat];
-//     },
-//     value: "count",
-// });
 
-// layer
-//     .setOptions({
-//         style: {
-//             radius: 18,
-//             color: {
-//                 0.5: "blue",
-//                 0.65: "rgb(117,211,248)",
-//                 0.7: "rgb(0, 255, 0)",
-//                 0.9: "#ffea00",
-//                 1.0: "red",
-//             },
-//         },
-//     })
-//     .render();
-console.log(map)
+var ridingOption = {
+    map: map,
+    panel: "panel",
+    policy: 2,
+    isOutline: true,
+    outlineColor: '#ffeeee',
+    autoFitView: false,
+    hideMarkers: true
+
+}
+var riding = new AMap.Riding(ridingOption)
+ //构造路线导航类
+ var driving = new AMap.Driving({
+    map: map,
+    panel: "panel"
+}); 
+
 // 创建一个 Icon
 var startIcon = new AMap.Icon({
     // 图标尺寸
@@ -128,7 +124,7 @@ var defaultIcon0 = new AMap.Icon({
 //     // 设置了 icon 以后，设置 icon 的偏移量，以 icon 的 [center bottom] 为原点
 //     offset: new AMap.Pixel(-13, -30)
 // });
-var markersList=[]
+
 var _marker = (title, position, icon, extData) => {
     let marker = new AMap.Marker({
         // content: title,
@@ -147,28 +143,10 @@ var _marker = (title, position, icon, extData) => {
         setMenu(marker, position, e.lnglat);
     });
     // type 0默认点  1起点 2终点 3 经过点 4 分支点
-    extData.type == 4 && markersList.push(marker);
 
     return marker;
 }
 
-
-var ridingOption = {
-    map: map,
-    panel: "panel",
-    policy: 2,
-    isOutline: true,
-    outlineColor: '#ffeeee',
-    autoFitView: false,
-    hideMarkers: true
-
-}
-var riding = new AMap.Riding(ridingOption)
- //构造路线导航类
- var driving = new AMap.Driving({
-    map: map,
-    panel: "panel"
-}); 
 
 function drawRoute(route) {
     // let last = arr[arr.length - 1]

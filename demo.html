@@ -47,6 +47,26 @@
             z-index: 1001;
             text-align: center;
         }
+
+        #w {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background-color: white;
+            z-index: 1111;
+            text-align: center;
+        }
+
+        #w div {
+            margin-top: 40px;
+            cursor: pointer;
+        }
+
+        .active {
+            color: red;
+        }
     </style>
 
     <title>GeoJSON</title>
@@ -62,15 +82,90 @@
 </head>
 
 <body>
+
     <div id="container"></div>
     <div id="panel"></div>
+    <div id="w">
+        <div class="s2 active">路线规划</div>
+        <div class="s1 ">推荐路线<span style="font-size: 12px;">(选择起点和终点)</span></div>
+    </div>
     <div id="over" class="over"></div>
-    <div id="layout" class="layout"><img src="http://images.cnblogs.com/cnblogs_com/qiuyan/477435/o_31.gif" /></div>
+    <div id="layout" class="layout"><img src="https://kybcrm-files.oss-cn-hangzhou.aliyuncs.com/prod/tesla/shanxiwenlv/demo/o_31.gif" /></div>
+    <script>
+        var userType = 1;
+        //分组
+        var postLines = [];
+        var lines = []; //所有的线
+        var markerList = [];//所有的岔路口
+        var selectLine = [];
+        var obj = {
+            start: '',
+            end: '',
+        }
+        var routeList = [];
+        var nextPolyline = [];
+        var isPointOnLineValue = 30
+
+        let s1 = document.querySelector('.s1');
+        let s2 = document.querySelector('.s2');
+        s1.onclick = () => {
+            userType = 2
+            s1.classList.add("active");
+            s2.classList.remove("active");
+            init()
+        }
+        s2.onclick = () => {
+            userType = 1
+            s2.classList.add("active");
+            s1.classList.remove("active");
+            init()
+        }
+    </script>
     <script src="./map.js"></script>
     <script src="./com.js"></script>
     <script src="./setMenu.js"></script>
     <script type="text/javascript">
 
+
+        init()
+
+        function init() {
+            map?.remove(markerList)
+
+            //分组
+            postLines = [];
+            lines = []; //所有的线
+            markerList = [];//所有的岔路口
+            selectLine = [];
+            obj = {
+                start: '',
+                end: '',
+            }
+            routeList = [];
+            nextPolyline = [];
+            isPointOnLineValue = 30
+            map?.clearMap()
+            showLoading()
+            $.ajax({
+                type: "GET",
+                url: 'https://kybcrm-files.oss-cn-hangzhou.aliyuncs.com/prod/tesla/smart-scenic-v2-web/amcharts/1.json',
+                async: true,
+                contentType: "application/json",
+                dataType: "json",
+                success: ((res) => {
+                    let geoJSON = { ...res }
+                    gcoord.transform(geoJSON, gcoord.WGS84, gcoord.GCJ02);
+                    getGroup(geoJSON);
+                    hideLoading();
+
+                }),
+                fail: ((err) => {
+                    console.log(err)
+                    hideLoading();
+
+                })
+            });
+        }
         // function _navigation(){
         //     $.ajax({
         //         type: "GET",
@@ -88,78 +183,7 @@
         //     });
         // }
 
-        $.ajax({
-            type: "GET",
-            url: 'https://kybcrm-files.oss-cn-hangzhou.aliyuncs.com/prod/tesla/smart-scenic-v2-web/amcharts/1.json',
-            async: true,
-            contentType: "application/json",
-            dataType: "json",
-            success: ((geoJSON) => {
-                gcoord.transform(geoJSON, gcoord.WGS84, gcoord.GCJ02);
 
-                //  LineStringArr = []
-
-                getGroup(geoJSON);
-
-                // layer.setData(filter_features, {
-                //     lnglat: (data) => {
-                //         const coordinates = data.value.geometry.coordinates;
-                //         return [coordinates[0], coordinates[1]];
-                //     },
-                //     value: "height",
-                // }).render();
-
-
-                // var geojson = new AMap.GeoJSON({
-                //     geoJSON: geoJSON,
-                //     getMarker: (geojson, lnglats) => {
-                //         // if (geojson.properties && geojson.properties.name) {
-                //         //     // const coordinates = geojson.geometry.coordinates
-                //         //     // let properties = geojson.properties;
-                //         //     // let marker;
-                //         //     // marker = _marker(geojson.properties.name, lnglats,
-                //         //     //     defaultIcon0, {
-                //         //     //         'id': coordinates,
-                //         //     //         'type': 3 // 0 默认值  1 起点 2 终点
-                //         //     //     })
-                //         //     // marker.setLabel({
-                //         //     //     offset: new AMap.Pixel(-24, -26), //设置文本标注偏移量
-                //         //     //     content: `${geojson.properties.name}`, //设置文本标注内容
-                //         //     //     direction: 'right' //设置文本标注方位
-                //         //     // });
-                //         //     // AMap.event.addListener(marker, 'click', (e) => {
-                //         //     //     //创建右键菜单
-                //         //     //     var contextMenu = new AMap.ContextMenu();
-                //         //     //     let {
-                //         //     //         type,
-                //         //     //         id
-                //         //     //     } = marker.getExtData()
-                //         //     //    setMenu(obj, contextMenu, marker, coordinates,type,id,e.lnglat,geojson);
-                //         //     // });
-                //         //     return marker;
-                //         // }
-                //         return;
-                //     },
-                //     getPolyline: (geojson, lnglats) => {
-                //         return new AMap.Polyline({
-                //              path: lnglats,
-                //              strokeWeight: 3,
-                //              strokeOpacity: 0.2,
-                //             //  bubble: true,
-                //         })
-                //     }
-                // });
-                // geojson.setMap(map);
-                // console.log('GeoJSON 数据加载完成')
-                // setTimeout(() => {
-                //     map.setFitView(null, false, [150, 60, 100, 60]);
-                // }, 2000)
-
-            }),
-            fail: ((err) => {
-                console.log(err)
-            })
-        });
     </script>
 </body>
 

@@ -112,19 +112,19 @@ function start_planning(type, p) {
 }
 function dilution(path) {
     // console.log(path.length,1);
-    if (path.length > 2000) {
-        path = path.filter((k, l) => {
-            return l % 20 == 0 || l == 0 || l == path.length - 1;
-        })
-    } else if (path.length > 3000) {
-        path = path.filter((k, l) => {
-            return l % 30 == 0 || l == 0 || l == path.length - 1;
-        })
-    } else if (path.length > 4000) {
-        path = path.filter((k, l) => {
-            return l % 40 == 0 || l == 0 || l == path.length - 1;
-        })
-    }
+    // if (path.length > 2000) {
+    //     path = path.filter((k, l) => {
+    //         return l % 20 == 0 || l == 0 || l == path.length - 1;
+    //     })
+    // } else if (path.length > 3000) {
+    //     path = path.filter((k, l) => {
+    //         return l % 30 == 0 || l == 0 || l == path.length - 1;
+    //     })
+    // } else if (path.length > 4000) {
+    //     path = path.filter((k, l) => {
+    //         return l % 40 == 0 || l == 0 || l == path.length - 1;
+    //     })
+    // }
     // console.log(path.length,2);
     return path;
 }

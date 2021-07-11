@@ -23,15 +23,15 @@ function setMenu(marker, coordinates, lnglat) {
                 })
                 reset()
                 obj.start = id;
-                if(userType==1){
+                if (userType == 1) {
                     routeList.push(coordinates)
                     // changArr(type, coordinates)
                     start_planning(type, coordinates)
                 }
-               
+
             }, 0);
     } else {
-        type != 0 &&userType==1&& contextMenu.addItem("设置为经过点",
+        type != 0 && userType == 1 && contextMenu.addItem("设置为经过点",
             () => {
                 showLoading()
                 setTimeout(() => {
@@ -48,13 +48,13 @@ function setMenu(marker, coordinates, lnglat) {
                 showLoading()
                 setTimeout(() => {
                     console.log("设置为终点", marker)
-                    if(userType==1){
+                    if (userType == 1) {
                         addRoute('end')
                         // draw2()
                     }
-                     obj.end = id;
-                     console.log([obj.start,obj.end])
-                     if(userType==2){
+                    obj.end = id;
+                    console.log([obj.start, obj.end])
+                    if (userType == 2) {
                         var walkOption = {
                             map: map,
                             panel: "panel",
@@ -63,19 +63,19 @@ function setMenu(marker, coordinates, lnglat) {
                             outlineColor: '#ffeeee',
                             autoFitView: true
                         }
-                    
+
                         // 步行导航
                         var walking = new AMap.Walking(walkOption)
                         //根据起终点坐标规划骑行路线
-                        walking.search(obj.start,obj.end, function(status, result) {
+                        walking.search(obj.start, obj.end, function (status, result) {
                             if (status === 'complete') {
                                 log.success('骑行路线数据查询成功')
                             } else {
                                 log.error('骑行路线数据查询失败' + result)
                             }
                         });
-                     }
-                     nextPolyline.map(v => map.remove(v));
+                    }
+                    nextPolyline.map(v => map.remove(v));
                     hideLoading();
                 }, 100)
 
@@ -91,7 +91,7 @@ function setMenu(marker, coordinates, lnglat) {
                 // changArr(type, coordinates)
             }, 1);
 
-        type != 3 && userType==1&&contextMenu.addItem("移除该锚点",
+        type != 3 && userType == 1 && contextMenu.addItem("移除该锚点",
             () => {
                 alert('功能开发中')
                 // console.log(changArr(type, coordinates, geojson))
@@ -112,12 +112,12 @@ function setMenu(marker, coordinates, lnglat) {
         let pre = routeList[routeList.length - 1];
         let allLines = [];
         console.time();
-       
+
         // 可以优话速度，先把点绑定在线上
         selectLine.some(path => {
             let a = AMap.GeometryUtil.isPointOnLine(coordinates, path, isPointOnLineValue)
             let b = AMap.GeometryUtil.isPointOnLine(pre, path, isPointOnLineValue)
-            console.log(a,b)
+            console.log(a, b)
             //在一条线上
             if (a && b) {
                 let line = []
@@ -126,7 +126,7 @@ function setMenu(marker, coordinates, lnglat) {
                     line.push(v);
                     let c = AMap.GeometryUtil.isPointOnLine(coordinates, line, isPointOnLineValue)
                     let d = AMap.GeometryUtil.isPointOnLine(pre, line, isPointOnLineValue)
-                  
+
                     //2个点中间的数据
                     if (c || d) {
                         aline.push(v);
@@ -145,17 +145,31 @@ function setMenu(marker, coordinates, lnglat) {
             alert('请选择线路关联的节点');
             return;
         };
-        console.log(allLines,'allLines');
-        allLines.map(v=>{
+        console.log(allLines, 'allLines');
+       let c= allLines.map(v => {
             var dis = AMap.GeometryUtil.distance(pre, v[0]);
-            let arr =v;
-            if(dis<isPointOnLineValue){
-                arr = [pre,...v,coordinates]
-            }else{
-                arr = [coordinates,...v,pre]
+            let arr = v;
+            if (dis < isPointOnLineValue) {
+                arr = [pre, ...v, coordinates]
+            } else {
+                arr = [coordinates, ...v, pre]
             }
             draw1(arr)
+            return arr;
         })
+       console.log({
+        "manPoint": coordinates,
+        "subPoint": pre,
+        "lines": c
+    })
+        fetch('api/admin/point/addRlt', {
+            "manPoint": coordinates,
+            "subPoint": pre,
+            "lines": c
+        }).then((res)=>{
+            console.log(res)
+        })
+
         // if (allLines.length == 1) {
         //     draw1(allLines[0]);
         // } else {
@@ -176,7 +190,7 @@ function setMenu(marker, coordinates, lnglat) {
         // }
 
         // hideLoading()
-     
+
         if (type == 'end') {
             marker.setIcon(endIcon)
             marker.setExtData({
@@ -272,16 +286,16 @@ var draw2 = () => {
     map.add(Polyline);
 }
 
-//   function _navigation(origin,destination){
-//       let show_fields = {
-//         polyline:','
-//       }
+
+
+//   function _ajax(data){
 //         $.ajax({
-//             type: "GET",
-//             url: `https://restapi.amap.com/v5/direction/walking?show_fields=1&AlternativeRout=3&origin=${origin}&destination=${destination}&key=159ac7ab77b871475921666af383d69b`,
+//             type: "post",
+//             url: `http://192.168.10.147/api/admin/point/addRlt`,
 //             async: true,
 //             contentType: "application/json",
 //             dataType: "json",
+//             data:data,
 //             success: ((res) => {
 //                 console.log(res)
 //                 drawRoute(res.route)
@@ -292,7 +306,6 @@ var draw2 = () => {
 //             })
 //         });
 //     }
-
 
 
 

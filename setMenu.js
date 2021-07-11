@@ -146,24 +146,34 @@ function setMenu(marker, coordinates, lnglat) {
             return;
         };
         console.log(allLines,'allLines');
-        if (allLines.length == 1) {
-            draw1(allLines[0]);
-        } else {
-            let less = {
-                value: null,
-                line: null
+        allLines.map(v=>{
+            var dis = AMap.GeometryUtil.distance(pre, v[0]);
+            let arr =v;
+            if(dis<isPointOnLineValue){
+                arr = [pre,...v,coordinates]
+            }else{
+                arr = [coordinates,...v,pre]
             }
-            allLines.map(v => {
-                let dis = AMap.GeometryUtil.distanceOfLine(v);
-                if (less.value == null || less.value > dis) {
-                    less = {
-                        value: dis,
-                        line: v
-                    }
-                }
-            })
-            draw1(less.line);
-        }
+            draw1(arr)
+        })
+        // if (allLines.length == 1) {
+        //     draw1(allLines[0]);
+        // } else {
+        //     let less = {
+        //         value: null,
+        //         line: null
+        //     }
+        //     allLines.map(v => {
+        //         let dis = AMap.GeometryUtil.distanceOfLine(v);
+        //         if (less.value == null || less.value > dis) {
+        //             less = {
+        //                 value: dis,
+        //                 line: v
+        //             }
+        //         }
+        //     })
+        //     draw1(less.line);
+        // }
 
         // hideLoading()
      

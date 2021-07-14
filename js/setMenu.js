@@ -28,7 +28,6 @@ function setMenu(marker, coordinates, lnglat) {
                     // changArr(type, coordinates)
                     start_planning(type, coordinates)
                 }
-
             }, 0);
     } else {
         type != 0 && userType == 1 && contextMenu.addItem("设置为经过点",

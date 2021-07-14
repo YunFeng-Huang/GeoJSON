@@ -93,6 +93,17 @@ function getGroup(geoJSON) {
 
 
 
+function getGroup2(geoJSON) {
+    console.log(geoJSON, 'geoJSON')
+    let LineString = geoJSON.features.filter(k => k.geometry.type == 'LineString')
+    lines = LineString.map((v, i) => {
+        const coordinates = v.geometry.coordinates
+       
+    })
+}
+
+
+
 
 // 开始规划路线
 function start_planning(type, p) {
@@ -138,4 +149,30 @@ function showLoading() {
 function hideLoading() {
     document.getElementById("over").style.display = "none";
     document.getElementById("layout").style.display = "none";
+}
+
+
+function postData(v){
+    console.log(v);
+    var formData = new FormData();
+    formData.append("photo",$("#photo")[0].files[0]);
+    formData.append("service",'App.Passion.UploadFile');
+    // formData.append("token",token);
+    $.ajax({
+        url:'http://www.baidu.com/', /*接口域名地址*/
+        type:'post',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success:function(res){
+            console.log(res.data);
+            if(res.data["code"]=="succ"){
+                alert('成功');
+            }else if(res.data["code"]=="err"){
+                alert('失败');
+            }else{
+                console.log(res);
+            }
+        }
+    })
 }

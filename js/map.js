@@ -100,7 +100,7 @@ var defaultIcon2 = new AMap.Icon({
     // 图标尺寸
     size: new AMap.Size(25, 34),
     // 图标的取图地址
-    image: './dir-via-marker1.png',
+    image: '../img/dir-via-marker1.png',
     // 图标所用图片大小
     imageSize: new AMap.Size(25, 34),
     // 图标取图偏移量
@@ -111,7 +111,7 @@ var defaultIcon0 = new AMap.Icon({
     // 图标尺寸
     size: new AMap.Size(25, 34),
     // 图标的取图地址
-    image: './dir-via-marker.png',
+    image: '../img/dir-via-marker.png',
     // 图标所用图片大小
     imageSize: new AMap.Size(25, 34),
     // 图标取图偏移量

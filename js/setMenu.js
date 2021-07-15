@@ -29,6 +29,10 @@ function setMenu(marker, coordinates, lnglat) {
                     start_planning(type, coordinates)
                 }
             }, 0);
+            contextMenu.addItem("设置",
+            () => {
+                document.querySelector('.pop').style="display:block";
+            }, 1);
     } else {
         type != 0 && userType == 1 && contextMenu.addItem("设置为经过点",
             () => {
@@ -103,6 +107,11 @@ function setMenu(marker, coordinates, lnglat) {
                 // delArr(coordinates)
 
             }, 1);
+
+        contextMenu.addItem("设置",
+            () => {
+                document.querySelector('.pop').style="display:block";
+            }, 1);
     }
     contextMenu.open(map, lnglat);
 
@@ -145,48 +154,48 @@ function setMenu(marker, coordinates, lnglat) {
             return;
         };
         console.log(allLines, 'allLines');
-       let c= allLines.map(v => {
-            var dis = AMap.GeometryUtil.distance(pre, v[0]);
-            let arr = v;
-            if (dis < isPointOnLineValue) {
-                arr = [pre, ...v, coordinates]
-            } else {
-                arr = [coordinates, ...v, pre]
-            }
-            draw1(arr)
-            return arr;
-        })
-       console.log({
-        "manPoint": coordinates,
-        "subPoint": pre,
-        "lines": c
-    })
-        fetch('api/admin/point/addRlt', {
-            "manPoint": coordinates,
-            "subPoint": pre,
-            "lines": c
-        }).then((res)=>{
-            console.log(res)
-        })
+    //    let c= allLines.map(v => {
+    //         var dis = AMap.GeometryUtil.distance(pre, v[0]);
+    //         let arr = v;
+    //         if (dis < isPointOnLineValue) {
+    //             arr = [pre, ...v, coordinates]
+    //         } else {
+    //             arr = [coordinates, ...v, pre]
+    //         }
+    //         draw1(arr)
+    //         return arr;
+    //     })
+    //    console.log({
+    //         "manPoint": coordinates,
+    //         "subPoint": pre,
+    //         "lines": c
+    //     })
+    //     fetch('api/admin/point/addRlt', {
+    //         "manPoint": coordinates,
+    //         "subPoint": pre,
+    //         "lines": c
+    //     }).then((res)=>{
+    //         console.log(res)
+    //     })
 
-        // if (allLines.length == 1) {
-        //     draw1(allLines[0]);
-        // } else {
-        //     let less = {
-        //         value: null,
-        //         line: null
-        //     }
-        //     allLines.map(v => {
-        //         let dis = AMap.GeometryUtil.distanceOfLine(v);
-        //         if (less.value == null || less.value > dis) {
-        //             less = {
-        //                 value: dis,
-        //                 line: v
-        //             }
-        //         }
-        //     })
-        //     draw1(less.line);
-        // }
+        if (allLines.length == 1) {
+            draw1(allLines[0]);
+        } else {
+            let less = {
+                value: null,
+                line: null
+            }
+            allLines.map(v => {
+                let dis = AMap.GeometryUtil.distanceOfLine(v);
+                if (less.value == null || less.value > dis) {
+                    less = {
+                        value: dis,
+                        line: v
+                    }
+                }
+            })
+            draw1(less.line);
+        }
 
         // hideLoading()
 

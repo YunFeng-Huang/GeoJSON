@@ -52,14 +52,13 @@ function getGroup(geoJSON) {
     lines = LineString.map((v, i) => {
         const coordinates = v.geometry.coordinates
         // // 创建一个 Marker 实例：
-        const startMarker = _marker(`${coordinates[0]}`, coordinates[0],
+        const startMarker = _marker(``, coordinates[0],
             defaultIcon0, {
             'id': coordinates[0],
             'type': 3 // 0 默认值 1 起点 2 终点
         });
 
-        const endMarker = _marker(`${coordinates[coordinates.length -
-            1]}`, coordinates[coordinates.length -
+        const endMarker = _marker(``, coordinates[coordinates.length -
             1],
             defaultIcon0, {
             'id': coordinates[coordinates.length -
@@ -123,19 +122,19 @@ function start_planning(type, p) {
 }
 function dilution(path) {
     // console.log(path.length,1);
-    // if (path.length > 2000) {
-    //     path = path.filter((k, l) => {
-    //         return l % 20 == 0 || l == 0 || l == path.length - 1;
-    //     })
-    // } else if (path.length > 3000) {
-    //     path = path.filter((k, l) => {
-    //         return l % 30 == 0 || l == 0 || l == path.length - 1;
-    //     })
-    // } else if (path.length > 4000) {
-    //     path = path.filter((k, l) => {
-    //         return l % 40 == 0 || l == 0 || l == path.length - 1;
-    //     })
-    // }
+    if (path.length > 2000) {
+        path = path.filter((k, l) => {
+            return l % 20 == 0 || l == 0 || l == path.length - 1;
+        })
+    } else if (path.length > 3000) {
+        path = path.filter((k, l) => {
+            return l % 30 == 0 || l == 0 || l == path.length - 1;
+        })
+    } else if (path.length > 4000) {
+        path = path.filter((k, l) => {
+            return l % 40 == 0 || l == 0 || l == path.length - 1;
+        })
+    }
     // console.log(path.length,2);
     return path;
 }
@@ -175,4 +174,18 @@ function postData(v){
             }
         }
     })
+}
+
+
+
+
+function iframe_post(){
+    return {
+        PToC:()=>{
+            return '112';
+        },
+        CToP:(type,value)=>{
+            window.parent.postMessage(type,value);
+        }
+    }
 }

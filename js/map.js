@@ -167,22 +167,74 @@ function drawRoute(route) {
     // map.setFitView([ routeLine])
 }
 
+function _setGeoJson(geoJSON){
+    var geojson = new AMap.GeoJSON({
+        geoJSON: geoJSON,
+        getMarker: (geojson, lnglats) => {
+            if (geojson.properties && geojson.properties.name) {
+                const coordinates = geojson.geometry.coordinates
+                const marker = _marker(geojson.properties.name, lnglats,
+                    defaultIcon0, {
+                    'id': lnglats,
+                    'type': 3 // 0 默认值 1 起点 2 终点
+                });
+                return marker;
+            }
+            return;
+        },
+        getPolyline: (geojson, lnglats) => {
+            return new AMap.Polyline({
+                path: lnglats,
+                strokeWeight: 3,
+                strokeOpacity: 0.2,
+                //  bubble: true,
+            })
+        }
 
-// // 解析RidingRoute对象，构造成AMap.Polyline的path参数需要的格式
-// // RidingResult对象结构参考文档 https://lbs.amap.com/api/javascript-api/reference/route-search#m_RideRoute
-// function parseRouteToPath(route) {
-//     var path = []
+    });
 
-//     for (var i = 0, l = route.rides.length; i < l; i++) {
-//         var step = route.rides[i]
+    geojson.setMap(map);
+}
 
-//         for (var j = 0, n = step.path.length; j < n; j++) {
-//             path.push(step.path[j])
-//         }
-//     }
-
-//     return path
-// }
-
-
-
+function _resetMap(){
+    markerList &&  map?.remove(markerList)
+     heatmap;//热力图
+     userType = 1;
+     postLines = []; //分组
+     lines = []; //所有的线
+     markerList = [];//所有的岔路口
+     selectLine = [];
+     obj = {
+        start: '',
+        end: '',
+    }
+     routeList = [];
+     nextPolyline = [];
+     isPointOnLineValue = 30
+    
+    map?.clearMap()
+}
+function init() {
+    _resetMap()
+    showLoading()
+    $.ajax({
+        type: "GET",
+        url: 'https://kybcrm-files.oss-cn-hangzhou.aliyuncs.com/prod/tesla/smart-scenic-v2-web/amcharts/1.json',
+        async: true,
+        contentType: "application/json",
+        dataType: "json",
+        success: ((res) => {
+            let geoJSON = { ...res }
+            gcoord.transform(geoJSON, gcoord.WGS84, gcoord.GCJ02);
+            console.log(geoJSON.features, 'geoJSON.features');
+            getGroup(geoJSON);
+            hideLoading();
+            _setlayer(geoJSON)
+            _setGeoJson(geoJSON);
+            console.log('GeoJSON 数据加载完成')
+        }),
+        fail: ((err) => {
+            console.log(err)
+        })
+    });
+}

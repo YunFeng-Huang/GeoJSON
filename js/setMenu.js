@@ -8,8 +8,8 @@ function setMenu(marker, coordinates, lnglat) {
     var contextMenu = new AMap.ContextMenu();
 
     const reset = () => {
-        if (id == obj.start) obj.start = '';
-        if (id == obj.end) obj.end = '';
+        if (id == obj.start && id!= obj.end) obj.start = '';
+        if (id == obj.end && id != obj.start) obj.end = '';
     }
     if (!obj.start) {
         contextMenu.addItem(
@@ -24,7 +24,10 @@ function setMenu(marker, coordinates, lnglat) {
                 reset()
                 obj.start = id;
                 if (userType == 1) {
-                    routeList.push(coordinates)
+                    pointList.push({
+                        point: coordinates,
+                        polyline:[]
+                    })
                     // changArr(type, coordinates)
                     start_planning(type, coordinates)
                 }
@@ -81,43 +84,32 @@ function setMenu(marker, coordinates, lnglat) {
                     nextPolyline.map(v => map.remove(v));
                     hideLoading();
                 }, 100)
-
-                // marker.setIcon(endIcon)
-                // marker.setExtData({
-                //     type: 2,
-                //     'id': coordinates,
-                // })
-                // reset()
-                // obj.end = id;
-                // routeList.push(coordinates)
-                // start_planning(type, coordinates)
-                // changArr(type, coordinates)
             }, 1);
 
         type != 3 && userType == 1 && contextMenu.addItem("移除该锚点",
             () => {
-                alert('功能开发中')
-                // console.log(changArr(type, coordinates, geojson))
-                // marker.setIcon(defaultIcon0)
-                // marker.setExtData({
-                //     type: 3,
-                //     'id': coordinates,
-                // })
-                // reset()
-                // delArr(coordinates)
-
+                map.remove(marker);
+                obj.end = '';
+                let polyline = pointList[pointList.length - 1].polyline;
+                map.remove(polyline)
+                nextPolyline.map(v => map.remove(v));
+                pointList.pop();
+                reset()
             }, 1);
 
         contextMenu.addItem("设置",
             () => {
                 document.querySelector('.pop').style="display:block";
             }, 1);
+
+
+   
     }
     contextMenu.open(map, lnglat);
 
     // 线路处理
     function addRoute(type) {
-        let pre = routeList[routeList.length - 1];
+        let pre = pointList[pointList.length - 1].point;
         let allLines = [];
         console.time();
 
@@ -154,17 +146,20 @@ function setMenu(marker, coordinates, lnglat) {
             return;
         };
         console.log(allLines, 'allLines');
-    //    let c= allLines.map(v => {
-    //         var dis = AMap.GeometryUtil.distance(pre, v[0]);
-    //         let arr = v;
-    //         if (dis < isPointOnLineValue) {
-    //             arr = [pre, ...v, coordinates]
-    //         } else {
-    //             arr = [coordinates, ...v, pre]
-    //         }
-    //         draw1(arr)
-    //         return arr;
-    //     })
+        allLines = allLines.map(v => {
+            var dis = AMap.GeometryUtil.distance(pre, v[0]);
+            let arr = v;
+            console.log(dis,'dis')
+            if (dis < isPointOnLineValue) {
+                arr = [pre, ...v, coordinates]
+            } 
+            var dis1 = AMap.GeometryUtil.distance(pre, v[v.length-1]);
+            if (dis1 < isPointOnLineValue) {
+                arr = [coordinates, ...v, pre]
+            }
+            // draw1(arr)
+            return arr;
+        })
     //    console.log({
     //         "manPoint": coordinates,
     //         "subPoint": pre,
@@ -177,9 +172,9 @@ function setMenu(marker, coordinates, lnglat) {
     //     }).then((res)=>{
     //         console.log(res)
     //     })
-
+        let line ;
         if (allLines.length == 1) {
-            draw1(allLines[0]);
+            line = allLines[0]
         } else {
             let less = {
                 value: null,
@@ -194,8 +189,10 @@ function setMenu(marker, coordinates, lnglat) {
                     }
                 }
             })
-            draw1(less.line);
+            line = less.line
         }
+       
+        let polyline =  draw1(line);
 
         // hideLoading()
 
@@ -215,30 +212,34 @@ function setMenu(marker, coordinates, lnglat) {
 
         reset()
         nextPolyline.map(v => map.remove(v));
-        routeList.push(coordinates)
+        pointList.push({
+            point: coordinates,
+            polyline,
+        })
         start_planning(type, coordinates)
     }
 }
 
 
 var draw1 = (path) => {
-    postLines = [...postLines, ...path]
+    routerLines = [...routerLines, ...path]
     let Polyline = new AMap.Polyline({
         path: path,
         isOutline: true,
         outlineColor: '#ffeeee',
         borderWeight: 2,
         strokeWeight: 5,
-        strokeColor: 'red',
+        strokeColor: '#0091ff',
         strokeOpacity: 0.9,
         // lineJoin: 'round',
         zIndex: 51,
     })
     map.add(Polyline);
+    return Polyline;
 }
-
+// '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00'，
 // function _moving() {
-//     var marker, lineArr = postLines.reverse();
+//     var marker, lineArr = routerLines.reverse();
 //     marker = new AMap.Marker({
 //         map: map,
 //         position: [116.478935, 39.997761],
@@ -281,7 +282,7 @@ var draw1 = (path) => {
 
 var draw2 = () => {
     let Polyline = new AMap.Polyline({
-        path: postLines,
+        path: routerLines,
         isOutline: true,
         outlineColor: '#ffeeee',
         borderWeight: 2,

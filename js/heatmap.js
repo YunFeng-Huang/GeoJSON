@@ -1,8 +1,19 @@
+
 var layer = new Loca.HeatmapLayer({
     map: map,
+    visible:false
+}).setOptions({
+    style: {
+        radius: 16,
+        color: {
+            0.5: "blue",
+            0.65: "rgb(117,211,248)",
+            0.7: "rgb(0, 255, 0)",
+            0.9: "#ffea00",
+            1.0: "red",
+        },
+    },
 });
-
-
 function _setlayer(geoJSON){
     let filter_features = geoJSON.features.filter(v => {
         v.height = 0;
@@ -18,16 +29,5 @@ function _setlayer(geoJSON){
             return [coordinates[0], coordinates[1]];
         },
         value: "height",
-    }).setOptions({
-        style: {
-            radius: 16,
-            color: {
-                0.5: '#2c7bb6',
-                0.65: '#abd9e9',
-                0.7: '#ffffbf',
-                0.9: '#fde468',
-                1.0: '#d7191c'
-            }
-        }
     }).render();
 }

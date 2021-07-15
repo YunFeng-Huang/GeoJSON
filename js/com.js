@@ -1,18 +1,4 @@
 
-var delArr = (id) => {
-    let last = routeList[routeList.length - 1]
-    if (last.id != id) {
-        alert('只能删除最近添加的锚点')
-        return false;
-    } else {
-        // riding.clear()
-        // last.routeLine && last.routeLine.hide()
-        routeList.splice(routeList.length - 1, 1)
-
-        return true;
-    }
-
-}
 
 
 
@@ -31,7 +17,7 @@ var draw = (path) => {
         outlineColor: '#ffeeee',
         borderWeight: 2,
         strokeWeight: 5,
-        strokeColor: '#0091ff',
+        strokeColor: '#00ad3a',
         strokeOpacity: 0.9,
         // lineJoin: 'round'
     })
@@ -89,6 +75,23 @@ function getGroup(geoJSON) {
 
 }
 
+var colors = ['#fb9a99'];
+// , '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00'，, '#e31a1c', '#fdbf6f', '#ff7f00'
+
+var layer1 = new Loca.LineLayer({
+    map: map,
+    // zIndex:201
+}).setOptions({
+    style: {
+        borderWidth: 4,
+        opacity: 1,
+        color: function (v) {
+            var id = v.value.line_id;
+            var len = colors.length;
+            return colors[id % len];
+        },
+    }
+});
 
 
 
@@ -119,6 +122,8 @@ function start_planning(type, p) {
             selectLine.push(path);
         }
     })
+    console.log(pointList, 'pointList');
+    console.log(routerLines,'routerLines')
 }
 function dilution(path) {
     // console.log(path.length,1);
@@ -179,13 +184,3 @@ function postData(v){
 
 
 
-function iframe_post(){
-    return {
-        PToC:()=>{
-            return '112';
-        },
-        CToP:(type,value)=>{
-            window.parent.postMessage(type,value);
-        }
-    }
-}

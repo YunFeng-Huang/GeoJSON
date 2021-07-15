@@ -13,37 +13,7 @@ var map = new AMap.Map('container', {
     pitch: 56,
     // viewMode: '3D'
 });
-var layer = new Loca.HeatmapLayer({
-    map: map,
-}).setOptions({
-    style: {
-        radius: 2,
-        color: {
-            0.5: "blue",
-            0.65: "rgb(117,211,248)",
-            0.7: "rgb(0, 255, 0)",
-            0.9: "#ffea00",
-            1.0: "red",
-        },
-    },
-});
-var colors = ['#fb9a99'];
-// , '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00'，, '#e31a1c', '#fdbf6f', '#ff7f00'
 
-var layer1 = new Loca.LineLayer({
-    map: map,
-    // zIndex:201
-}).setOptions({
-    style: {
-        borderWidth: 4,
-        opacity: 1,
-        color: function (v) {
-            var id = v.value.line_id;
-            var len = colors.length;
-            return colors[id % len];
-        },
-    }
-});
 
 
 var ridingOption = {
@@ -200,7 +170,7 @@ function _resetMap(){
     markerList &&  map?.remove(markerList)
      heatmap;//热力图
      userType = 1;
-     postLines = []; //分组
+     routerLines = []; //分组
      lines = []; //所有的线
      markerList = [];//所有的岔路口
      selectLine = [];
@@ -208,7 +178,7 @@ function _resetMap(){
         start: '',
         end: '',
     }
-     routeList = [];
+     pointList = [];
      nextPolyline = [];
      isPointOnLineValue = 30
     

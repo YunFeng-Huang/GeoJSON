@@ -53,7 +53,7 @@ function getGroup(geoJSON) {
         });
         // setMarker(startMarker,coordinates[0])
         // setMarker(endMarker,coordinates[coordinates.length - 1])
-        markerList = [startMarker, ...markerList, endMarker]
+        // markerList = [startMarker, ...markerList, endMarker]
         return {
             "line_id": +new Date() + i,
             "line_name": v.properties.name,

@@ -2,7 +2,8 @@
 function setMenu(marker, coordinates, lnglat) {
     let {
         type,
-        id
+        id,
+        title
     } = marker.getExtData()
     //创建右键菜单
     var contextMenu = new AMap.ContextMenu();
@@ -26,7 +27,8 @@ function setMenu(marker, coordinates, lnglat) {
                 if (userType == 1) {
                     pointList.push({
                         point: coordinates,
-                        polyline:[]
+                        polyline:[],
+                        title: title
                     })
                     // changArr(type, coordinates)
                     start_planning(type, coordinates)
@@ -109,7 +111,8 @@ function setMenu(marker, coordinates, lnglat) {
 
     // 线路处理
     function addRoute(type) {
-        let pre = pointList[pointList.length - 1].point;
+        let lastp = pointList[pointList.length - 1];
+        let pre = lastp.point;
         let allLines = [];
         console.time();
 
@@ -149,29 +152,50 @@ function setMenu(marker, coordinates, lnglat) {
         allLines = allLines.map(v => {
             var dis = AMap.GeometryUtil.distance(pre, v[0]);
             let arr = v;
-            console.log(dis,'dis')
+            let p1 = {
+                'Q': pre[1],
+                'R': pre[0],
+                'lat': pre[1],
+                'lng': pre[0]
+            }
+            let p2 = {
+                'Q': coordinates[1],
+                'R': coordinates[0],
+                'lat': coordinates[1],
+                'lng': coordinates[0]
+            }
             if (dis < isPointOnLineValue) {
-                arr = [pre, ...v, coordinates]
+                arr = [p1, ...v, p2]
             } 
             var dis1 = AMap.GeometryUtil.distance(pre, v[v.length-1]);
             if (dis1 < isPointOnLineValue) {
-                arr = [coordinates, ...v, pre]
+                arr = [p2, ...v, p1]
             }
             // draw1(arr)
             return arr;
         })
-    //    console.log({
-    //         "manPoint": coordinates,
-    //         "subPoint": pre,
-    //         "lines": c
-    //     })
-    //     fetch('api/admin/point/addRlt', {
-    //         "manPoint": coordinates,
-    //         "subPoint": pre,
-    //         "lines": c
-    //     }).then((res)=>{
-    //         console.log(res)
-    //     })
+        console.log({
+            "manPoint": coordinates,
+            "subPoint": pre,
+            "lines": allLines
+        })
+        // let distance = AMap.GeometryUtil.distanceOfLine(allLines);
+        // console.log(distance,'distance')
+       
+        let c1 = [...coordinates];
+        let p1 = [...pre];
+        if (!c1[2]) c1[2] = 0;
+        if (!p1[2]) p1[2] = 0;
+        c1[3] = title
+        p1[3] = lastp.title
+        fetch('api/admin/point/addRlt', {
+            "manPoint": c1,
+            "subPoint": p1,
+            "lines": allLines,
+            "distance": allLines.map(v => +(AMap.GeometryUtil.distanceOfLine(v).toFixed(2))),
+        }).then((res) => {
+            console.log(res)
+        })
         let line ;
         if (allLines.length == 1) {
             line = allLines[0]
@@ -194,6 +218,7 @@ function setMenu(marker, coordinates, lnglat) {
        
         let polyline =  draw1(line);
 
+       
         // hideLoading()
 
         if (type == 'end') {

@@ -96,6 +96,7 @@ var defaultIcon0 = new AMap.Icon({
 // });
 
 var _marker = (title, position, icon, extData) => {
+    extData.title = title;
     let marker = new AMap.Marker({
         // content: title,
         title: title,

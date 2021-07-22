@@ -9,7 +9,7 @@ $.ajaxSetup({
         console.log(err)
     }
 });
-let urlHost = 'http://192.168.10.107:8080/'
+let urlHost = 'https://47.99.183.98:8090/'
 
 function getQueryString(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");

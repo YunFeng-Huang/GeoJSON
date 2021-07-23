@@ -53,6 +53,8 @@ function setMenu(marker, coordinates, lnglat) {
         type != 2 && !obj.end && contextMenu.addItem(
             "设置为终点",
             () => {
+                var r = confirm("确定设置为终点，点击确定生成路线");
+                if (!r ) return;
                 showLoading()
                 setTimeout(() => {
                     console.log("设置为终点", marker)

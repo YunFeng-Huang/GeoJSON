@@ -184,3 +184,10 @@ function postData(v){
 
 
 
+function showToast(title = '网路异常，请稍后点击') {
+    $('.mask_box').html(title);
+    $('.mask').removeClass('hide');
+    setTimeout(() => {
+        $('.mask').addClass('hide');
+    }, 2000)
+}

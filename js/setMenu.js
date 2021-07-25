@@ -31,7 +31,7 @@ function setMenu(marker, coordinates, lnglat) {
                         title: title
                     })
                     // changArr(type, coordinates)
-                    start_planning(type, coordinates)
+                    start_planning(coordinates)
                 }
             }, 0);
             contextMenu.addItem("设置",
@@ -53,31 +53,51 @@ function setMenu(marker, coordinates, lnglat) {
         type != 2 && !obj.end && contextMenu.addItem(
             "设置为终点",
             () => {
-                var r = confirm("确定设置为终点，点击确定生成路线");
-                if (!r ) return;
+                let r = true;
+                if (userType == 1)r= confirm("确定设置为终点，点击确定生成路线");
+                if (!r && userType == 1) return hideLoading();
                 showLoading()
                 setTimeout(() => {
+                    console.log(userType,'userType')
                     console.log("设置为终点", marker)
                     if (userType == 1) {
+                       
                         addRoute('end')
                         // draw2()
                     }
                     obj.end = id;
                     console.log([obj.start, obj.end])
                     if (userType == 2) {
-                        var walkOption = {
+                        // var walkOption = {
+                        //     map: map,
+                        //     panel: "panel"
+                        // }
+
+                        // // 步行导航
+                        // var walking = new AMap.Walking(walkOption)
+                        // //根据起终点坐标规划骑行路线
+                        // walking.search(obj.start, obj.end, function (status, result) {
+                        //     if (status === 'complete') {
+                        //         console.log('骑行路线数据查询成功')
+                        //     } else {
+                        //         console.log('骑行路线数据查询失败' + result)
+                        //     }
+                        // });
+                        var ridingOption = {
                             map: map,
                             panel: "panel",
+                            policy: 1,
                             hideMarkers: false,
                             isOutline: true,
                             outlineColor: '#ffeeee',
                             autoFitView: true
                         }
 
-                        // 步行导航
-                        var walking = new AMap.Walking(walkOption)
+                        var riding = new AMap.Riding(ridingOption)
+
                         //根据起终点坐标规划骑行路线
-                        walking.search(obj.start, obj.end, function (status, result) {
+                        riding.search(obj.start, obj.end, function (status, result) {
+                            // result即是对应的公交路线数据信息，相关数据结构文档请参考  https://lbs.amap.com/api/javascript-api/reference/route-search#m_RidingResult
                             if (status === 'complete') {
                                 log.success('骑行路线数据查询成功')
                             } else {
@@ -85,7 +105,7 @@ function setMenu(marker, coordinates, lnglat) {
                             }
                         });
                     }
-                    nextPolyline.map(v => map.remove(v));
+                    nextPolyline.map(v => map?.remove(v));
                     hideLoading();
                 }, 100)
             }, 1);
@@ -243,7 +263,7 @@ function setMenu(marker, coordinates, lnglat) {
             point: coordinates,
             polyline,
         })
-        start_planning(type, coordinates)
+        start_planning(coordinates)
     }
 }
 

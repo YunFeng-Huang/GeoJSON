@@ -35,6 +35,7 @@ var draw = (path) => {
 function getGroup(geoJSON) {
     console.log(geoJSON, 'geoJSON')
     let LineString = geoJSON.features.filter(k => k.geometry.type == 'LineString')
+    let markerList = geoJSON.features.filter(k => k.geometry.type == 'Point' && k.properties.name)
     lines = LineString.map((v, i) => {
         const coordinates = v.geometry.coordinates
         // // 创建一个 Marker 实例：
@@ -51,18 +52,17 @@ function getGroup(geoJSON) {
                 1],
             'type': 3 // 0 默认值 1 起点 2 终点
         });
-        // setMarker(startMarker,coordinates[0])
-        // setMarker(endMarker,coordinates[coordinates.length - 1])
         // markerList = [startMarker, ...markerList, endMarker]
+        map.add([startMarker, endMarker]);
+        // if (v.properties.name && v.geometry.type == 'Point') markerList.push(v);
         return {
             "line_id": +new Date() + i,
             "line_name": v.properties.name,
             "lnglat": coordinates,
             'start': coordinates[0],
-            'end': coordinates[coordinates.length -
-                1],
-            'points': [coordinates[0], coordinates[coordinates.length -
-                1]]
+            'end': coordinates[coordinates.length - 1],
+            'points': [coordinates[0], coordinates[coordinates.length - 1]],
+                
         }
     })
 
@@ -70,8 +70,8 @@ function getGroup(geoJSON) {
         lnglat: 'lnglat'
     }).render();
 
-
-    map.add(markerList);
+    console.log(markerList,'markerList');
+    // map.add(markerList);
 
 }
 
@@ -95,32 +95,28 @@ var layer1 = new Loca.LineLayer({
 
 
 
-function getGroup2(geoJSON) {
-    console.log(geoJSON, 'geoJSON')
-    let LineString = geoJSON.features.filter(k => k.geometry.type == 'LineString')
-    lines = LineString.map((v, i) => {
-        const coordinates = v.geometry.coordinates
+// function getGroup2(geoJSON) {
+//     console.log(geoJSON, 'geoJSON')
+//     let LineString = geoJSON.features.filter(k => k.geometry.type == 'LineString')
+//     lines = LineString.map((v, i) => {
+//         const coordinates = v.geometry.coordinates
        
-    })
-}
+//     })
+// }
 
 
 
 
 // 开始规划路线
-function start_planning(type, p) {
+function start_planning(p) {
     selectLine = [];
     lines.map((v, i) => {
         let path = v.lnglat;
-        if (v.start == p) {
+        if (v.start == p || AMap.GeometryUtil.isPointOnLine(p, path, isPointOnLineValue)) {
             path = dilution(path);
             draw(path);
             selectLine.push(path);
-        } else if (AMap.GeometryUtil.isPointOnLine(p, path, isPointOnLineValue)) {
-            path = dilution(path);
-            draw(path);
-            selectLine.push(path);
-        }
+        } 
     })
     console.log(pointList, 'pointList');
     console.log(routerLines,'routerLines')

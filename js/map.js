@@ -167,24 +167,7 @@ function _setGeoJson(geoJSON){
     geojson.setMap(map);
 }
 
-function _resetMap(){
-    markerList &&  map?.remove(markerList)
-     heatmap;//热力图
-     userType = 1;
-     routerLines = []; //分组
-     lines = []; //所有的线
-     markerList = [];//所有的岔路口
-     selectLine = [];
-     obj = {
-        start: '',
-        end: '',
-    }
-     pointList = [];
-     nextPolyline = [];
-     isPointOnLineValue = 30
-    
-    map?.clearMap()
-}
+
 function init() {
     _resetMap()
     showLoading()

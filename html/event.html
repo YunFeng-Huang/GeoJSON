@@ -65,7 +65,7 @@
         <el-table :data="tableData" style="width: 600px">
             <el-table-column prop="start_time" label="比赛报名时间" width="250">
             </el-table-column>
-            <el-table-column prop="title" label="赛事封面" width="180">
+            <el-table-column prop="title" label="赛事标题" width="180">
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
@@ -158,10 +158,11 @@
                         'token': '807BB0364FC5EC081D396599D7D3D4A6',
                         'matchId': row.id
                     }
-                    fetch(
-                        'PCodeClient/api.ashx?cmd=dqh_creatMatch&token=807BB0364FC5EC081D396599D7D3D4A6',
+                    fetch( '/PCodeClient/api.ashx?cmd=dqh_creatMatch&token=807BB0364FC5EC081D396599D7D3D4A6',
                         params
-                    )
+                    ).then(res=>{
+                        this.$message.success(res.msg.ds[0].msg)
+                    })
                 },
                 handleAvatarSuccess(res, file) {
                     this.form.img = res.src;
@@ -187,9 +188,16 @@
                         }
                     fetch('/PCodeClient/api.ashx?cmd=dqh_creatMatch&token=807BB0364FC5EC081D396599D7D3D4A6',
                         params).then((res)=>{
-                            console.log(res)
+                            this.$message.success(res.msg.ds[0].msg)
                             this.dialogVisible = false;
+                              this.init()
                         })
+                },
+                init(){
+fetch('/PCodeClient/api.ashx?cmd=dqh_matchList&token=807BB0364FC5EC081D396599D7D3D4A6')
+.then(res => {
+this.tableData = res.msg.ds1;
+})
                 }
 
                 // submit() {
@@ -200,10 +208,7 @@
 
             },
             created() {
-                fetch('/PCodeClient/api.ashx?cmd=dqh_matchList&token=807BB0364FC5EC081D396599D7D3D4A6')
-                    .then(res => {
-                        this.tableData = res.msg.ds1;
-                    })
+                this.init()
             }
         })
     </script>

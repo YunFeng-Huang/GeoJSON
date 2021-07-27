@@ -15,7 +15,6 @@ var map = new AMap.Map('container', {
 });
 
 
-
 var ridingOption = {
     map: map,
     panel: "panel",
@@ -186,6 +185,8 @@ function init() {
             _setlayer(geoJSON)
             _setGeoJson(geoJSON);
             console.log('GeoJSON 数据加载完成')
+           
+
         }),
         fail: ((err) => {
             console.log(err)

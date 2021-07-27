@@ -24,6 +24,7 @@ function setMenu(marker, coordinates, lnglat) {
                 })
                 reset()
                 obj.start = id;
+                
                 if (userType == 1) {
                     pointList.push({
                         point: coordinates,
@@ -34,17 +35,17 @@ function setMenu(marker, coordinates, lnglat) {
                     start_planning(coordinates)
                 }
             }, 0);
-            contextMenu.addItem("设置",
-            () => {
-                document.querySelector('.pop').style="display:block";
-            }, 1);
+            // contextMenu.addItem("设置",
+            // () => {
+            //     document.querySelector('.pop').style="display:block";
+            // }, 1);
     } else {
         type != 0 && userType == 1 && contextMenu.addItem("设置为经过点",
             () => {
                 showLoading()
                 setTimeout(() => {
                     console.log("设置为经过点", marker)
-                    addRoute('')
+                    addRoute('', coordinates)
                     hideLoading();
                 }, 100)
 
@@ -62,7 +63,7 @@ function setMenu(marker, coordinates, lnglat) {
                     console.log("设置为终点", marker)
                     if (userType == 1) {
                        
-                        addRoute('end')
+                        addRoute('end', coordinates)
                         // draw2()
                     }
                     obj.end = id;
@@ -104,6 +105,8 @@ function setMenu(marker, coordinates, lnglat) {
                                 log.error('骑行路线数据查询失败' + result)
                             }
                         });
+
+                        // getRoutes2(obj.start, obj.end);
                     }
                     nextPolyline.map(v => map?.remove(v));
                     hideLoading();
@@ -121,26 +124,88 @@ function setMenu(marker, coordinates, lnglat) {
                 reset()
             }, 1);
 
-        contextMenu.addItem("设置",
-            () => {
-                document.querySelector('.pop').style="display:block";
-            }, 1);
+        // contextMenu.addItem("设置",
+        //     () => {
+        //         document.querySelector('.pop').style="display:block";
+        //     }, 1);
 
 
    
     }
     contextMenu.open(map, lnglat);
+    function getRoutes2(start, end){
+
+        // lines.map((v, i) => {
+        //     let path = v.lnglat;
+        //     if (v.start == p || AMap.GeometryUtil.isPointOnLine(p, path, isPointOnLineValue)) {
+        //         path = dilution(path);
+        //         draw(path);
+        //     }
+        // })
+        aa(start,end)
+    }
+    // lines.map(v => {
+    //     markerList.map(k => {
+    //         let p = k.geometry.coordinates;
+    //         let a = AMap.GeometryUtil.isPointOnLine(p, v.lnglat, isPointOnLineValue)
+    //         if (a) {
+    //             v['points'] = v['points'] || [];
+    //             v['points'] = [...v['points'], [...p]]
+    //         }
+    //     })
+    // })
+     // let path = v.lnglat;
+            // if (v.start == p || AMap.GeometryUtil.isPointOnLine(p, path, isPointOnLineValue)) {
+            //     path = dilution(path);
+            // }
+    function aa(p,end){
+        lines.some((v, i) => {
+            console.log(v)
+        //    return v['points'].some(v => {
+        //         let less = {
+        //             value: null,
+        //             point: null
+        //         }
+        //        let d = AMap.GeometryUtil.distance(v, p);
+        //        if (d < 1000) {
+        //            console.log(d,'dddd')
+        //             let dis = AMap.GeometryUtil.distance(v, end);
+        //             if (less.value == null || less.value > dis) {
+        //                 less = {
+        //                     value: dis,
+        //                     point: v
+        //                 }
+        //             }
+        //            point = less.point
+        //            console.log(less);
+        //         //    map.emit('click', {
+        //         //        lnglat: point
+        //         //    });
+                   
+        //            let d1 = AMap.GeometryUtil.distance(point, end);
+        //            console.log(d1,'d1')
+        //            if (d1 > 1000){
+        //                aa(point, end)
+        //            }
+
+        //         }
+               
+        //        return d < 1000;
+        //     })
+        })
+    }
+
+
+
 
     // 线路处理
-    function addRoute(type) {
+    function addRoute(type, point) {
         let lastp = pointList[pointList.length - 1];
         let pre = lastp.point;
         let allLines = [];
         console.time();
-
-        // 可以优话速度，先把点绑定在线上
         selectLine.some(path => {
-            let a = AMap.GeometryUtil.isPointOnLine(coordinates, path, isPointOnLineValue)
+            let a = AMap.GeometryUtil.isPointOnLine(point, path, isPointOnLineValue)
             let b = AMap.GeometryUtil.isPointOnLine(pre, path, isPointOnLineValue)
             console.log(a, b)
             //在一条线上
@@ -149,7 +214,7 @@ function setMenu(marker, coordinates, lnglat) {
                 let aline = []
                 path.some(v => {
                     line.push(v);
-                    let c = AMap.GeometryUtil.isPointOnLine(coordinates, line, isPointOnLineValue)
+                    let c = AMap.GeometryUtil.isPointOnLine(point, line, isPointOnLineValue)
                     let d = AMap.GeometryUtil.isPointOnLine(pre, line, isPointOnLineValue)
 
                     //2个点中间的数据
@@ -165,7 +230,7 @@ function setMenu(marker, coordinates, lnglat) {
         })
         console.timeEnd();
         if (!selectLine.some(path => {
-            if (AMap.GeometryUtil.isPointOnLine(coordinates, path, isPointOnLineValue)) return true;
+            if (AMap.GeometryUtil.isPointOnLine(point, path, isPointOnLineValue)) return true;
         })) {
             alert('请选择线路关联的节点');
             return;
@@ -181,10 +246,10 @@ function setMenu(marker, coordinates, lnglat) {
                 'lng': pre[0]
             }
             let p2 = {
-                'Q': coordinates[1],
-                'R': coordinates[0],
-                'lat': coordinates[1],
-                'lng': coordinates[0]
+                'Q': point[1],
+                'R': point[0],
+                'lat': point[1],
+                'lng': point[0]
             }
             if (dis < isPointOnLineValue) {
                 arr = [p1, ...v, p2]
@@ -197,20 +262,21 @@ function setMenu(marker, coordinates, lnglat) {
             return arr;
         })
         console.log({
-            "manPoint": coordinates,
+            "manPoint": point,
             "subPoint": pre,
             "lines": allLines
         })
         // let distance = AMap.GeometryUtil.distanceOfLine(allLines);
         // console.log(distance,'distance')
        
-        let c1 = [...coordinates];
+        let c1 = [...point];
         let p1 = [...pre];
         if (!c1[2]) c1[2] = 0;
         if (!p1[2]) p1[2] = 0;
         c1[3] = title
         p1[3] = lastp.title
-        fetch('api/admin/point/addRlt', {
+        console.log('addRlt');
+        fetch('https://47.99.183.98:8090/api/admin/point/addRlt', {
             "manPoint": c1,
             "subPoint": p1,
             "lines": allLines,
@@ -247,23 +313,23 @@ function setMenu(marker, coordinates, lnglat) {
             marker.setIcon(endIcon)
             marker.setExtData({
                 type: 2,
-                'id': coordinates,
+                'id': point,
             })
         } else {
             marker.setIcon(defaultIcon1)
             marker.setExtData({
                 type: 0,
-                'id': coordinates,
+                'id': point,
             })
         }
 
         reset()
         nextPolyline.map(v => map.remove(v));
         pointList.push({
-            point: coordinates,
+            point: point,
             polyline,
         })
-        start_planning(coordinates)
+        start_planning(point)
     }
 }
 

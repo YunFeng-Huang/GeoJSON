@@ -17,6 +17,7 @@
     <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
     <link rel="stylesheet" href="../css/index.css" />
     <script src="../js/jquery-3.3.1.min.js"></script>
+     <script src="../js/ajax.js"></script>
     <!-- <script src="https://a.amap.com/Loca/static/mock/heatmapData.js"></script> -->
     <script src="https://unpkg.com/gcoord/dist/gcoord.js"></script>
 </head>
@@ -52,7 +53,7 @@
     </div>
     <script type="text/javascript">
         var heatmap; //热力图
-        var userType = 1; // 推荐路线 or 路线规划
+        var userType = 2; // 推荐路线 or 路线规划
         var routerLines = []; //分组
         var lines = []; //所有的线
         var markerList = []; //所有的岔路口
@@ -86,7 +87,7 @@
     <script src="../js/map.js"></script>
     <script src="../js/com.js"></script>
     <script src="../js/setMenu.js"></script>
-    <script src="../js/ajax.js"></script>
+   
     <script src="../js/heatmap.js"></script>
     <script>
         init()

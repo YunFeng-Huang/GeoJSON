@@ -146,7 +146,7 @@ function _setGeoJson(geoJSON){
                 const coordinates = geojson.geometry.coordinates
                 const marker = _marker(geojson.properties.name, lnglats,
                     defaultIcon0, {
-                    'id': lnglats,
+                        'id': coordinates,
                     'type': 3 // 0 默认值 1 起点 2 终点
                 });
                 return marker;
@@ -180,7 +180,7 @@ function init() {
         success: ((res) => {
             let geoJSON = { ...res }
             gcoord.transform(geoJSON, gcoord.WGS84, gcoord.GCJ02);
-            console.log(geoJSON.features, 'geoJSON.features');
+            // console.log(geoJSON.features, 'geoJSON.features');
             getGroup(geoJSON);
             hideLoading();
             _setlayer(geoJSON)

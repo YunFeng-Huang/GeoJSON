@@ -1,0 +1,153 @@
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <script src="https://unpkg.com/vue@next"></script>
+  <!-- import CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/element-plus/lib/theme-chalk/index.css">
+  <!-- import JavaScript -->
+  <script src="https://unpkg.com/element-plus/lib/index.full.js"></script>
+  <script src="../js/jquery-3.3.1.min.js"></script>
+  <script src="../js/ajax.js"></script>
+  <title>赛事报名</title>
+  <style>
+    .el-upload--picture-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    html {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <style>
+    .avatar-uploader .el-upload {
+      border: 1px dashed #d9d9d9;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+      border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+      font-size: 28px;
+      color: #8c939d;
+      width: 178px;
+      height: 178px;
+      line-height: 178px;
+      text-align: center;
+    }
+
+    .avatar {
+      width: 178px;
+      height: 178px;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <el-form :label-position="labelPosition" label-width="180px" :model="formLabelAlign">
+      <el-form-item label="选择路线">
+        <el-input v-model="form.lineId" style="width: 300px;"></el-input>
+      </el-form-item>
+      <el-form-item label="比赛报名时间">
+        <el-input v-model="form.signStartTime" style="width: 300px;"></el-input>
+      </el-form-item>
+
+      <el-form-item label="比赛开始时间">
+        <el-input v-model="form.startTime" style="width: 300px;"></el-input>
+      </el-form-item>
+
+      <el-form-item label="比赛截止日期">
+        <el-input v-model="form.endTime" style="width: 300px;"></el-input>
+      </el-form-item>
+      <el-form-item label="参与人数">
+        <el-input v-model="form.awardNum" style="width: 300px;"></el-input>
+      </el-form-item>
+      <el-form-item label="奖励积分">
+        <el-input v-model="form.integral" style="width: 300px;"></el-input>
+      </el-form-item>
+
+      <el-form-item label="描述">
+        <el-input v-model="form.content" style="width: 300px;"></el-input>
+      </el-form-item>
+
+      <el-form-item label="上传图片">
+        <el-upload class="avatar-uploader" action="http://qixing.dqhtravel.com/DInterface/appimgupload.aspx"
+          :show-file-list="false" :on-success="handleAvatarSuccess">
+          <img v-if="imageUrl" :src="imageUrl" class="avatar">
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+      </el-form-item>
+      <el-form-item>
+        <el-button plain @click.native.prevent="submit">提交</el-button>
+      </el-form-item>
+    </el-form>
+  </div>
+  <script>
+    const App = {
+      data() {
+        return {
+          imageUrl: '',
+          id: '',
+          form: {
+            lineId: '',
+            signStartTime: '',
+            startTime: '',
+            endTime: '',
+            totalNum: '',
+            awardNum: '',
+            integral: '',
+            content: '',
+          }
+        };
+      },
+      created() {
+        this.id = getQueryString('id')
+      },
+      methods: {
+        handleAvatarSuccess(res, file) {
+          this.form.imageUrl = res.src;
+
+          this.imageUrl = URL.createObjectURL(file.raw);
+        },
+        beforeAvatarUpload(file) {
+          const isJPG = file.type === 'image/jpeg';
+          const isLt2M = file.size / 1024 / 1024 < 2;
+          if (!isJPG) {
+            this.$message.error('上传头像图片只能是 JPG 格式!');
+          }
+          if (!isLt2M) {
+            this.$message.error('上传头像图片大小不能超过 2MB!');
+          }
+          return isJPG && isLt2M;
+        },
+        submit() {
+          let params= {...this.form,...{
+          'token': '807BB0364FC5EC081D396599D7D3D4A6',
+          'lineId': 'id'
+          }}
+          fetch(
+            '/PCodeClient/api.ashx?cmd=dqh_creatMatch&token=807BB0364FC5EC081D396599D7D3D4A6',params
+            )
+        }
+
+      }
+    };
+    const app = Vue.createApp(App);
+    app.use(ElementPlus);
+    app.mount("#app");
+  </script>
+
+</body>
+
+</html>

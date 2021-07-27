@@ -1,127 +1,94 @@
 <html>
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <script src="https://unpkg.com/vue@next"></script>
-    <!-- import CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/element-plus/lib/theme-chalk/index.css">
-    <!-- import JavaScript -->
-    <script src="https://unpkg.com/element-plus/lib/index.full.js"></script>
-    <title>设置</title>
-    <style>
-        .el-upload--picture-card{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        html{
-          width: 100%;
-          height: 100%;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <script src="https://unpkg.com/vue@next"></script>
+  <!-- import CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/element-plus/lib/theme-chalk/index.css">
+  <!-- import JavaScript -->
+  <script src="https://unpkg.com/element-plus/lib/index.full.js"></script>
+  <title>设置</title>
+  <style>
+    .el-upload--picture-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    html {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
 </head>
 
 <body>
-    <div id="app">
-        <el-form :label-position="labelPosition" label-width="180px" :model="formLabelAlign">
-            <p>设置节点的安全范围，以便提供自动打卡和电子指向标</p>
-            <el-form-item label="安全电子围栏设置">
-                <el-input v-model="form.name" style="width: 300px;"></el-input>
-              </el-form-item>
+  <div id="app">
+    <el-form :label-position="labelPosition" label-width="180px" :model="formLabelAlign">
+      <p>设置节点的安全范围，以便提供自动打卡和电子指向标</p>
+      <el-form-item label="安全电子围栏设置">
+        <el-input v-model="form.name" style="width: 300px;"></el-input>
+      </el-form-item>
 
-              <p>步道路线电子围栏设置，提供超出安全范围的告警提示</p>
-            <el-form-item label="步道路线电子围栏设置">
-                <el-input v-model="form.name" style="width: 300px;"></el-input>
-              </el-form-item>
-<!-- 
+      <p>步道路线电子围栏设置，提供超出安全范围的告警提示</p>
+      <el-form-item label="步道路线电子围栏设置">
+        <el-input v-model="form.name" style="width: 300px;"></el-input>
+      </el-form-item>
 
-            <el-form-item label="步道图片">
-                <el-upload
-                action="https://jsonplaceholder.typicode.com/posts/"
-                list-type="picture-card"
-                :limit="2"
-                :before-upload="beforeUpload">
-                  <template #default>
-                    <i class="el-icon-plus"></i>
-                  </template>
-                  <template #file="{file}">
-                    <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
-                  </template>
-              </el-upload>
-            </el-form-item>
-            <el-form-item label="景观图片">
-                <el-upload
-                action="https://jsonplaceholder.typicode.com/posts/"
-                list-type="picture-card"
-                :limit="2"
-                :before-upload="beforeUpload">
-                  <template #default>
-                    <i class="el-icon-plus"></i>
-                  </template>
-                  <template #file="{file}">
-                    <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
-                  </template>
-              </el-upload>
-            </el-form-item>
-            <el-form-item label="游客图片上传">
-                <el-upload
-                action="https://jsonplaceholder.typicode.com/posts/"
-                list-type="picture-card"
-                :limit="2"
-                :before-upload="beforeUpload">
-                  <template #default>
-                    <i class="el-icon-plus"></i>
-                  </template>
-                  <template #file="{file}">
-                    <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
-                  </template>
-              </el-upload>
-            </el-form-item> -->
-          </el-form>
-    </div>
-    <script>
-        const App = {
-            data() {
-                return {
-                    form:{name:''},
-                    fileList: [],
-                     dialogImageUrl: '',
-                    dialogVisible: false,
-                    disabled: false
-                };
-            },
-            methods: {
-                handleRemove(file, fileList) {
-                    console.log(file, fileList);
-                },
-                handlePreview(file) {
-                    console.log(file);
-                },
-                handleExceed(files, fileList) {
-                    this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-                },
-                handlePictureCardPreview(file) {
-                    this.dialogImageUrl = file.url;
-                    this.dialogVisible = true;
-                },
-                beforeUpload(file, fileList){
-                    console.log(file, fileList)
-                    const isJPG = file.type === 'image/jpeg';
-                    const isLt2M = file.size / 1024 / 1024 < 2;
+      <el-form-item>
+        <el-button plain @click="submit">朴素按钮</el-button>
 
-                    if (!isLt2M) {
-                    this.$message.error('上传头像图片大小不能超过 2MB!');
-                    }
-                    return isLt2M;
-                }
-               
-            }
+      </el-form-item>
+    </el-form>
+  </div>
+  <script>
+    const App = {
+      data() {
+        return {
+          form: {
+            name: ''
+          },
+          fileList: [],
+          dialogImageUrl: '',
+          dialogVisible: false,
+          disabled: false
         };
-        const app = Vue.createApp(App);
-        app.use(ElementPlus);
-        app.mount("#app");
-    </script>
+      },
+      methods: {
+        handleRemove(file, fileList) {
+          console.log(file, fileList);
+        },
+        handlePreview(file) {
+          console.log(file);
+        },
+        handleExceed(files, fileList) {
+          this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+        },
+        handlePictureCardPreview(file) {
+          this.dialogImageUrl = file.url;
+          this.dialogVisible = true;
+        },
+        beforeUpload(file, fileList) {
+          console.log(file, fileList)
+          const isJPG = file.type === 'image/jpeg';
+          const isLt2M = file.size / 1024 / 1024 < 2;
+
+          if (!isLt2M) {
+            this.$message.error('上传头像图片大小不能超过 2MB!');
+          }
+          return isLt2M;
+        },
+        submit() {
+          alert(1);
+        }
+
+      }
+    };
+    const app = Vue.createApp(App);
+    app.use(ElementPlus);
+    app.mount("#app");
+  </script>
 </body>
 
 </html>

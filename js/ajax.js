@@ -9,7 +9,7 @@ $.ajaxSetup({
         console.log(err)
     }
 });
-let urlHost = 'https://47.99.183.98:8090/'
+let urlHost = 'http://47.99.66.186:9999'
 
 function getQueryString(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
@@ -21,11 +21,11 @@ function getQueryString(name) {
 }
 
 
-function fetch(url, data, type = 'POST') {
+function fetch(url, data={}, type = 'POST') {
     return new Promise((resolve, enject) => {
         $.ajax({
             type: type,
-            url: urlHost + url,
+            url: url.includes('http')?url:( urlHost + url),
             async: true,
             data: JSON.stringify(data),
             contentType: "application/json",

@@ -33,44 +33,68 @@ var draw = (path) => {
 
 
 function getGroup(geoJSON) {
-    console.log(geoJSON, 'geoJSON')
-    let LineString = geoJSON.features.filter(k => k.geometry.type == 'LineString')
-    let markerList = geoJSON.features.filter(k => k.geometry.type == 'Point' && k.properties.name)
-    lines = LineString.map((v, i) => {
-        const coordinates = v.geometry.coordinates
-        // // 创建一个 Marker 实例：
-        const startMarker = _marker(``, coordinates[0],
-            defaultIcon0, {
-            'id': coordinates[0],
-            'type': 3 // 0 默认值 1 起点 2 终点
-        });
+    
+    markerList =[]
+    // let LineString = geoJSON.features.filter(k => {
+     
+    //    return k.geometry.type == 'LineString'
+    // })
+    // markerList = geoJSON.features.filter(k => {
+    //     return i
+    // })
+    lines = geoJSON.features.map((v, i) => {
+        if (v.properties.name && v.geometry.type == 'Point') markerList.push(v);
+        if (v.geometry.type == 'LineString'){
+            const coordinates = v.geometry.coordinates
 
-        const endMarker = _marker(``, coordinates[coordinates.length -
-            1],
-            defaultIcon0, {
-            'id': coordinates[coordinates.length -
+            // // 创建一个 Marker 实例：
+            const startMarker = _marker(``, coordinates[0],
+                defaultIcon0, {
+                'id': coordinates[0],
+                'type': 3 // 0 默认值 1 起点 2 终点
+            });
+
+            const endMarker = _marker(``, coordinates[coordinates.length -
                 1],
-            'type': 3 // 0 默认值 1 起点 2 终点
-        });
-        // markerList = [startMarker, ...markerList, endMarker]
-        map.add([startMarker, endMarker]);
-        // if (v.properties.name && v.geometry.type == 'Point') markerList.push(v);
-        return {
-            "line_id": +new Date() + i,
-            "line_name": v.properties.name,
-            "lnglat": coordinates,
-            'start': coordinates[0],
-            'end': coordinates[coordinates.length - 1],
-            'points': [coordinates[0], coordinates[coordinates.length - 1]],
-                
+                defaultIcon0, {
+                'id': coordinates[coordinates.length -
+                    1],
+                'type': 3 // 0 默认值 1 起点 2 终点
+            });
+            // markerList = [startMarker, ...markerList, endMarker]
+            map.add([startMarker, endMarker]);
+            // markerList.push(coordinates[0]);
+            // markerList.push(coordinates[coordinates.length -
+            //     1]);
+            return {
+                "line_id": +new Date() + i,
+                "line_name": v.properties.name,
+                "lnglat": coordinates,
+                'start': coordinates[0],
+                'end': coordinates[coordinates.length - 1],
+                'points': []
+            }
         }
-    })
-
+        
+    }).filter(Boolean)
     layer1.setData(lines, {
         lnglat: 'lnglat'
     }).render();
 
-    console.log(markerList,'markerList');
+//    console.time()
+//     lines.map(v => {
+//         markerList.map(k => {
+//             let p = k.geometry.coordinates;
+//             let a = AMap.GeometryUtil.isPointOnLine(p, v.lnglat, isPointOnLineValue)
+//             if (a) {
+//                 v['points'] = [...v['points'], [...p]]
+//             }
+//         })
+//     })
+//     console.timeEnd()
+    // console.log(lines, 'linesde');
+   
+ 
     // map.add(markerList);
 
 }
@@ -118,24 +142,22 @@ function start_planning(p) {
             selectLine.push(path);
         } 
     })
-    console.log(pointList, 'pointList');
-    console.log(routerLines,'routerLines')
 }
 function dilution(path) {
     // console.log(path.length,1);
-    if (path.length > 2000) {
-        path = path.filter((k, l) => {
-            return l % 20 == 0 || l == 0 || l == path.length - 1;
-        })
-    } else if (path.length > 3000) {
-        path = path.filter((k, l) => {
-            return l % 30 == 0 || l == 0 || l == path.length - 1;
-        })
-    } else if (path.length > 4000) {
-        path = path.filter((k, l) => {
-            return l % 40 == 0 || l == 0 || l == path.length - 1;
-        })
-    }
+    // if (path.length > 2000) {
+    //     path = path.filter((k, l) => {
+    //         return l % 20 == 0 || l == 0 || l == path.length - 1;
+    //     })
+    // } else if (path.length > 3000) {
+    //     path = path.filter((k, l) => {
+    //         return l % 30 == 0 || l == 0 || l == path.length - 1;
+    //     })
+    // } else if (path.length > 4000) {
+    //     path = path.filter((k, l) => {
+    //         return l % 40 == 0 || l == 0 || l == path.length - 1;
+    //     })
+    // }
     // console.log(path.length,2);
     return path;
 }

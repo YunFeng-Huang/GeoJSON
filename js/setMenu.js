@@ -29,7 +29,8 @@ function setMenu(marker, coordinates, lnglat) {
                     pointList.push({
                         point: coordinates,
                         polyline:[],
-                        title: title
+                        title: title,
+                        line:[]
                     })
                     // changArr(type, coordinates)
                     start_planning(coordinates)
@@ -64,26 +65,19 @@ function setMenu(marker, coordinates, lnglat) {
                     if (userType == 1) {
                        
                         addRoute('end', coordinates)
+                        // console.log(pointList,'pointList')
+                        // pointList.map(v => {
+                        //     v.w.path
+                        // })
+                        iframe.postMsg({
+                            list: pointList.map(v => v.line)
+                        })
                         // draw2()
                     }
                     obj.end = id;
                     console.log([obj.start, obj.end])
                     if (userType == 2) {
-                        // var walkOption = {
-                        //     map: map,
-                        //     panel: "panel"
-                        // }
-
-                        // // 步行导航
-                        // var walking = new AMap.Walking(walkOption)
-                        // //根据起终点坐标规划骑行路线
-                        // walking.search(obj.start, obj.end, function (status, result) {
-                        //     if (status === 'complete') {
-                        //         console.log('骑行路线数据查询成功')
-                        //     } else {
-                        //         console.log('骑行路线数据查询失败' + result)
-                        //     }
-                        // });
+                    
                         var ridingOption = {
                             map: map,
                             panel: "panel",
@@ -328,6 +322,7 @@ function setMenu(marker, coordinates, lnglat) {
         pointList.push({
             point: point,
             polyline,
+            line: line,
         })
         start_planning(point)
     }

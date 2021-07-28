@@ -168,6 +168,7 @@ function _setGeoJson(geoJSON){
 
 
 function init() {
+    
     _resetMap()
     showLoading()
     $.ajax({
@@ -187,6 +188,24 @@ function init() {
             console.log('GeoJSON 数据加载完成')
            
 
+        }),
+        fail: ((err) => {
+            console.log(err)
+        })
+    });
+
+    $.ajax({
+        type: "GET",
+        url: 'http://47.99.66.186:9999/PCodeClient/api.ashx?cmd=dqh_walkPathPlan&token=807BB0364FC5EC081D396599D7D3D4A6&startPointId=146&endPointId=160',
+        async: true,
+        contentType: "application/json",
+        dataType: "json",
+        success: ((res) => {
+            console.log(res,'res');
+            let path = res.msg.ds1[0].lnglatGaode;
+            console.log(JSON.parse(path), 'JSON.parse(path)');
+            path = JSON.parse(path);
+            draw(path.map(v => [v.lng, v.lat]));
         }),
         fail: ((err) => {
             console.log(err)

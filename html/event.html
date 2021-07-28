@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <!-- 引入样式 -->
-    <link rel="stylesheet" href="https://unpkg.com/element-ui@1.4/lib/theme-default/index.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 
     <script src="../js/jquery-3.3.1.min.js"></script>
     <script src="../js/ajax.js"></script>
+    <script src="../js/iframeMsg.js"></script>
     <title>赛事报名列表</title>
     <style>
         .el-upload--picture-card {
@@ -23,6 +24,11 @@
 
         template {
             display: block;
+        }
+
+        iframe {
+            width: 100%;
+            height: 70%;
         }
     </style>
     <style>
@@ -56,10 +62,10 @@
 </head>
 
 <body>
-    <!-- 先引入 Vue -->
-    <script src="https://unpkg.com/vue@2.5/dist/vue.js"></script>
-    <!-- 引入组件库 -->
-    <script src="https://unpkg.com/element-ui@1.4/lib/index.js"></script>
+    <!-- import Vue before Element -->
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <!-- import JavaScript -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <div id="app">
         <el-button type="primary" @click="add" style="margin-bottom:20px">添加赛事</el-button>
         <el-table :data="tableData" style="width: 600px">
@@ -69,7 +75,12 @@
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button @click="handleClick(scope.row)" type="text" size="small">报名</el-button>
+                    <el-button type="text" size="small" v-if="scope.row.sign_status>0">
+                        已报名
+                    </el-button>
+                    <el-button v-else type="text" @click="handleClick(scope.row)" size="small">
+                        报名
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -83,23 +94,43 @@
                 </el-form-item>
                 <el-form-item label="选择路线">
                     <!-- <el-input v-model="form.lineId" style="width: 300px;"></el-input> -->
-                     <el-radio-group v-model="form.lineId">
-                         <el-radio :label="3">路线规划</el-radio>
-                         <el-radio :label="6">推荐路线</el-radio>
-                     </el-radio-group>
+                    <el-radio-group v-model="form.lineId" @change="_changeRadio">
+                        <el-radio :label="1">路线规划</el-radio>
+                        <el-radio :label="2">推荐路线</el-radio>
+                    </el-radio-group>
+
+                    <el-dialog width="80%" :visible.sync="innerVisible" append-to-body>
+                        <iframe :src="`./index.html?form=event&type=${form.lineId}`"></iframe>
+                    </el-dialog>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="outerVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="innerVisible = true">打开内层 Dialog</el-button>
+                    </div>
+
+
+
                 </el-form-item>
                 <el-form-item label="比赛报名时间">
-                    <el-input v-model="form.signStartTime" style="width: 300px;"></el-input>
+                    <el-date-picker v-model="form.signStartTime" format="yyyy-MM-dd HH:mm:ss"
+                        value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间" default-time="12:00:00">
+                    </el-date-picker>
                 </el-form-item>
 
                 <el-form-item label="比赛开始时间">
-                    <el-input v-model="form.startTime" style="width: 300px;"></el-input>
+                    <el-date-picker v-model="form.startTime" type="datetime" format="yyyy-MM-dd HH:mm:ss"
+                        value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间" default-time="12:00:00">
+                    </el-date-picker>
                 </el-form-item>
 
                 <el-form-item label="比赛截止日期">
-                    <el-input v-model="form.endTime" style="width: 300px;"></el-input>
+                    <el-date-picker v-model="form.endTime" type="datetime" format="yyyy-MM-dd HH:mm:ss"
+                        value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间" default-time="12:00:00">
+                    </el-date-picker>
                 </el-form-item>
-                <el-form-item label="参与人数">
+                <el-form-item label="总人数">
+                    <el-input v-model="form.totalNum" style="width: 300px;"></el-input>
+                </el-form-item>
+                <el-form-item label="积分奖励人数">
                     <el-input v-model="form.awardNum" style="width: 300px;"></el-input>
                 </el-form-item>
                 <el-form-item label="奖励积分">
@@ -132,36 +163,43 @@
             el: '#app',
             data() {
                 return {
+                    innerVisible: false,
                     dialogVisible: false,
                     tableData: [],
                     imageUrl: '',
                     id: '',
                     form: {
-                        lineId: '',
-                        signStartTime: '',
-                        startTime: '',
-                        endTime: '',
-                        totalNum: '',
-                        awardNum: '',
-                        integral: '',
-                        content: '',
-                    }
+                        lineId: '72',
+                        signStartTime: '2021-07-20 19:22:22',
+                        startTime: '2021-07-30 19:22:22',
+                        endTime: '2021-07-31 19:22:22',
+                        totalNum: '10',
+                        awardNum: '2',
+                        integral: '100',
+                        content: '测试测试测试测试测试测试测试',
+                        title: 'title',
+                        img: '222',
+                    },
+                    route:null
                 };
             },
             methods: {
+                _changeRadio() {
+                    this.innerVisible = true;
+                },
                 add() {
                     this.dialogVisible = true;
                 },
                 handleClick(row) {
                     console.log(row);
                     let params = {
-                        'token': '807BB0364FC5EC081D396599D7D3D4A6',
                         'matchId': row.id
                     }
-                    fetch( '/PCodeClient/api.ashx?cmd=dqh_creatMatch&token=807BB0364FC5EC081D396599D7D3D4A6',
+                    fetch('/PCodeClient/api.ashx?cmd=dqh_signMatch',
                         params
-                    ).then(res=>{
+                    ).then(res => {
                         this.$message.success(res.msg.ds[0].msg)
+                        this.init()
                     })
                 },
                 handleAvatarSuccess(res, file) {
@@ -180,36 +218,35 @@
                 //     return isJPG && isLt2M;
                 // },
                 submit() {
-                    let params = {
-                            ...this.form,
-                            ...{
-                                'token': '807BB0364FC5EC081D396599D7D3D4A6',
-                            }
-                        }
-                    fetch('/PCodeClient/api.ashx?cmd=dqh_creatMatch&token=807BB0364FC5EC081D396599D7D3D4A6',
-                        params).then((res)=>{
-                            this.$message.success(res.msg.ds[0].msg)
-                            this.dialogVisible = false;
-                              this.init()
-                        })
+
+                    fetch('/PCodeClient/api.ashx?cmd=dqh_creatMatch',
+                        this.form).then((res) => {
+                        this.$message.success(res.msg.ds[0].msg)
+                        this.dialogVisible = false;
+                        this.init()
+                    })
                 },
-                init(){
-fetch('/PCodeClient/api.ashx?cmd=dqh_matchList&token=807BB0364FC5EC081D396599D7D3D4A6')
-.then(res => {
-this.tableData = res.msg.ds1;
-})
+                init() {
+                    fetch('/PCodeClient/api.ashx?cmd=dqh_matchList')
+                        .then(res => {
+                            this.tableData = res.msg.ds1;
+                        })
                 }
-
-                // submit() {
-                // fetch('http://47.99.66.186:9999/PCodeClient/api.ashx?cmd=dqh_signMatch', {
-                // 'token': '807BB0364FC5EC081D396599D7D3D4A6',
-                // })
-                // }
-
             },
             created() {
                 this.init()
-            }
+            },
+            mounted() {
+                iframe.listenMsg((v) => {
+                    console.log(v)
+                    let arr = v.data.list.reduce((v,k)=>{
+                    return [...v,...k]
+                    },[])
+                    console.log(arr)
+
+                    this.route = arr
+                })
+            },
         })
     </script>
 

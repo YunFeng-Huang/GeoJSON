@@ -69,9 +69,7 @@ function setMenu(marker, coordinates, lnglat) {
                         // pointList.map(v => {
                         //     v.w.path
                         // })
-                        iframe.postMsg({
-                            list: pointList.map(v => v.line)
-                        })
+                        
                         // draw2()
                     }
                     obj.end = id;

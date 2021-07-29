@@ -170,6 +170,19 @@ function dilution(path) {
 }
 
 
+function start_end(startPointId, endPointId) {
+    fetch(`/PCodeClient/api.ashx?cmd=dqh_walkPathPlan&startPointId=${startPointId}&endPointId=${endPointId}`).then((res) => {
+        console.log(res, 'res');
+        let path = res.msg.ds1[0].lnglatGaode;
+        console.log(JSON.parse(path), 'JSON.parse(path)');
+        path = JSON.parse(path);
+        let _path = path.map(v => [v.lng, v.lat])
+        draw(_path);
+        iframe.postMsg({
+            list: _path
+        })
+    })
+}
 
 function showLoading() {
     document.getElementById("over").style.display = "block";

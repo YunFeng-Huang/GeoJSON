@@ -88,7 +88,7 @@
 
 
         <el-dialog title="添加" :visible.sync="dialogVisible" size="tiny">
-            <el-form label-position="left" label-width="180px" :model="form">
+            <el-form ref="form" label-position="left" label-width="180px" :model="form">
                 <el-form-item label="赛事标题">
                     <el-input v-model="form.title" style="width: 300px;"></el-input>
                 </el-form-item>
@@ -169,16 +169,16 @@
                     imageUrl: '',
                     id: '',
                     form: {
-                        lineId: '72',
-                        signStartTime: '2021-07-20 19:22:22',
-                        startTime: '2021-07-30 19:22:22',
-                        endTime: '2021-07-31 19:22:22',
-                        totalNum: '10',
-                        awardNum: '2',
-                        integral: '100',
-                        content: '测试测试测试测试测试测试测试',
-                        title: 'title',
-                        img: '222',
+                        lineId: '',
+                        signStartTime: '',
+                        startTime: '',
+                        endTime: '',
+                        totalNum: '',
+                        awardNum: '',
+                        integral: '',
+                        content: '',
+                        title: '',
+                        img: '',
                     },
                     route:null
                 };
@@ -189,6 +189,22 @@
                 },
                 add() {
                     this.dialogVisible = true;
+                   this.$nextTick(()=>{
+                        console.log(this.$refs.form)
+                        this.$refs.form?.resetFields();
+                        this.form={
+                        lineId: '',
+                        signStartTime: '',
+                        startTime: '',
+                        endTime: '',
+                        totalNum: '',
+                        awardNum: '',
+                        integral: '',
+                        content: '',
+                        title: '',
+                        img: '',
+                        }
+                   })
                 },
                 handleClick(row) {
                     console.log(row);
@@ -238,13 +254,13 @@
             },
             mounted() {
                 iframe.listenMsg((v) => {
-                    console.log(v)
-                    let arr = v.data.list.reduce((v,k)=>{
-                    return [...v,...k]
-                    },[])
-                    console.log(arr)
+                    // console.log(v)
+                    // let arr = v.data.list.reduce((v,k)=>{
+                    // return [...v,...k]
+                    // },[])
+                    // console.log(arr)
 
-                    this.route = arr
+                    this.route = v.data.list
                 })
             },
         })

@@ -48,21 +48,21 @@ function getGroup(geoJSON) {
             const coordinates = v.geometry.coordinates
 
             // // 创建一个 Marker 实例：
-            const startMarker = _marker(``, coordinates[0],
-                defaultIcon0, {
-                'id': coordinates[0],
-                'type': 3 // 0 默认值 1 起点 2 终点
-            });
+            // const startMarker = _marker(``, coordinates[0],
+            //     defaultIcon0, {
+            //     'id': coordinates[0],
+            //     'type': 3 // 0 默认值 1 起点 2 终点
+            // });
 
-            const endMarker = _marker(``, coordinates[coordinates.length -
-                1],
-                defaultIcon0, {
-                'id': coordinates[coordinates.length -
-                    1],
-                'type': 3 // 0 默认值 1 起点 2 终点
-            });
+            // const endMarker = _marker(``, coordinates[coordinates.length -
+            //     1],
+            //     defaultIcon0, {
+            //     'id': coordinates[coordinates.length -
+            //         1],
+            //     'type': 3 // 0 默认值 1 起点 2 终点
+            // });
             // markerList = [startMarker, ...markerList, endMarker]
-            map.add([startMarker, endMarker]);
+            // map.add([startMarker, endMarker]);
             // markerList.push(coordinates[0]);
             // markerList.push(coordinates[coordinates.length -
             //     1]);
@@ -229,3 +229,50 @@ function showToast(title = '网路异常，请稍后点击') {
         $('.mask').addClass('hide');
     }, 2000)
 }
+
+
+
+
+
+function dqh_wcList(startPointId, endPointId) {
+    dqh_pointLineRlt();
+    fetch(`/PCodeClient/api.ashx?cmd=dqh_wcList`, { types:'主入口,出入口,节岔点'}).then((res) => {
+        console.log(res, 'res');
+        let path = res.msg.ds;
+     const m =    path.map(v=>{
+         v.type_n = v.type;
+         delete v.type;
+         return _marker(v.name, [v.lngGaode, v.latGaode],
+             defaultIcon0, {
+                 ...{
+                     'type': 3 // 0 默认值 1 起点 2 终点
+                 },...v});
+         
+        })
+        map.add(m);
+    })  
+}
+
+
+
+function dqh_pointLineRlt(id) {
+    fetch(`/PCodeClient/api.ashx?cmd=dqh_pointLineRlt`,{
+        id
+    }).then((res) => {
+        console.log(res, 'res');
+        // let path = res.msg.ds;
+        // const m = path.map(v => {
+        //     v.type_n = v.type;
+        //     delete v.type;
+        //     return _marker(v.name, [v.lngGaode, v.latGaode],
+        //         defaultIcon0, {
+        //         ...{
+        //             'type': 3 // 0 默认值 1 起点 2 终点
+        //         }, ...v
+        //     });
+
+        // })
+        // map.add(m);
+    })
+}
+

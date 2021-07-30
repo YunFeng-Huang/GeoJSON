@@ -5,11 +5,12 @@ function setMenu(marker, coordinates, lnglat) {
         id,
         title
     } = marker.getExtData()
+    console.log(marker.getExtData(), 'marker.getExtData()');
     //创建右键菜单
     var contextMenu = new AMap.ContextMenu();
 
     const reset = () => {
-        if (id == obj.start && id!= obj.end) obj.start = '';
+        if (id == obj.start && id != obj.end) obj.start = '';
         if (id == obj.end && id != obj.start) obj.end = '';
     }
     if (!obj.start) {
@@ -19,34 +20,36 @@ function setMenu(marker, coordinates, lnglat) {
                 console.log("设置为起点", marker)
                 marker.setIcon(startIcon)
                 marker.setExtData({
-                    type: 1,
-                    'id': coordinates,
+                    ...marker.getExtData(), ...{
+                        type: 1,
+                    },
                 })
                 reset()
                 obj.start = id;
-                
+                // dqh_pointLineRlt(id);
                 if (userType == 1) {
                     pointList.push({
                         point: coordinates,
-                        polyline:[],
+                        polyline: [],
                         title: title,
-                        line:[]
+                        line: []
                     })
                     // changArr(type, coordinates)
                     start_planning(coordinates)
                 }
             }, 0);
-            // contextMenu.addItem("设置",
-            // () => {
-            //     document.querySelector('.pop').style="display:block";
-            // }, 1);
+        // contextMenu.addItem("设置",
+        // () => {
+        //     document.querySelector('.pop').style="display:block";
+        // }, 1);
     } else {
         type != 0 && userType == 1 && contextMenu.addItem("设置为经过点",
             () => {
                 showLoading()
+                dqh_pointLineRlt(id);
                 setTimeout(() => {
                     console.log("设置为经过点", marker)
-                    addRoute('', coordinates)
+                    // addRoute('', coordinates)
                     hideLoading();
                 }, 100)
 
@@ -56,26 +59,26 @@ function setMenu(marker, coordinates, lnglat) {
             "设置为终点",
             () => {
                 let r = true;
-                if (userType == 1)r= confirm("确定设置为终点，点击确定生成路线");
+                if (userType == 1) r = confirm("确定设置为终点，点击确定生成路线");
                 if (!r && userType == 1) return hideLoading();
                 showLoading()
                 setTimeout(() => {
-                    console.log(userType,'userType')
+                    console.log(userType, 'userType')
                     console.log("设置为终点", marker)
                     if (userType == 1) {
-                       
+
                         addRoute('end', coordinates)
                         // console.log(pointList,'pointList')
                         // pointList.map(v => {
                         //     v.w.path
                         // })
-                        
+
                         // draw2()
                     }
                     obj.end = id;
                     console.log([obj.start, obj.end])
                     if (userType == 2) {
-                    
+
                         var ridingOption = {
                             map: map,
                             panel: "panel",
@@ -122,10 +125,10 @@ function setMenu(marker, coordinates, lnglat) {
         //     }, 1);
 
 
-   
+
     }
     contextMenu.open(map, lnglat);
-    function getRoutes2(start, end){
+    function getRoutes2(start, end) {
 
         // lines.map((v, i) => {
         //     let path = v.lnglat;
@@ -134,7 +137,7 @@ function setMenu(marker, coordinates, lnglat) {
         //         draw(path);
         //     }
         // })
-        aa(start,end)
+        aa(start, end)
     }
     // lines.map(v => {
     //     markerList.map(k => {
@@ -146,44 +149,44 @@ function setMenu(marker, coordinates, lnglat) {
     //         }
     //     })
     // })
-     // let path = v.lnglat;
-            // if (v.start == p || AMap.GeometryUtil.isPointOnLine(p, path, isPointOnLineValue)) {
-            //     path = dilution(path);
-            // }
-    function aa(p,end){
+    // let path = v.lnglat;
+    // if (v.start == p || AMap.GeometryUtil.isPointOnLine(p, path, isPointOnLineValue)) {
+    //     path = dilution(path);
+    // }
+    function aa(p, end) {
         lines.some((v, i) => {
             console.log(v)
-        //    return v['points'].some(v => {
-        //         let less = {
-        //             value: null,
-        //             point: null
-        //         }
-        //        let d = AMap.GeometryUtil.distance(v, p);
-        //        if (d < 1000) {
-        //            console.log(d,'dddd')
-        //             let dis = AMap.GeometryUtil.distance(v, end);
-        //             if (less.value == null || less.value > dis) {
-        //                 less = {
-        //                     value: dis,
-        //                     point: v
-        //                 }
-        //             }
-        //            point = less.point
-        //            console.log(less);
-        //         //    map.emit('click', {
-        //         //        lnglat: point
-        //         //    });
-                   
-        //            let d1 = AMap.GeometryUtil.distance(point, end);
-        //            console.log(d1,'d1')
-        //            if (d1 > 1000){
-        //                aa(point, end)
-        //            }
+            //    return v['points'].some(v => {
+            //         let less = {
+            //             value: null,
+            //             point: null
+            //         }
+            //        let d = AMap.GeometryUtil.distance(v, p);
+            //        if (d < 1000) {
+            //            console.log(d,'dddd')
+            //             let dis = AMap.GeometryUtil.distance(v, end);
+            //             if (less.value == null || less.value > dis) {
+            //                 less = {
+            //                     value: dis,
+            //                     point: v
+            //                 }
+            //             }
+            //            point = less.point
+            //            console.log(less);
+            //         //    map.emit('click', {
+            //         //        lnglat: point
+            //         //    });
 
-        //         }
-               
-        //        return d < 1000;
-        //     })
+            //            let d1 = AMap.GeometryUtil.distance(point, end);
+            //            console.log(d1,'d1')
+            //            if (d1 > 1000){
+            //                aa(point, end)
+            //            }
+
+            //         }
+
+            //        return d < 1000;
+            //     })
         })
     }
 
@@ -245,8 +248,8 @@ function setMenu(marker, coordinates, lnglat) {
             }
             if (dis < isPointOnLineValue) {
                 arr = [p1, ...v, p2]
-            } 
-            var dis1 = AMap.GeometryUtil.distance(pre, v[v.length-1]);
+            }
+            var dis1 = AMap.GeometryUtil.distance(pre, v[v.length - 1]);
             if (dis1 < isPointOnLineValue) {
                 arr = [p2, ...v, p1]
             }
@@ -260,7 +263,7 @@ function setMenu(marker, coordinates, lnglat) {
         })
         // let distance = AMap.GeometryUtil.distanceOfLine(allLines);
         // console.log(distance,'distance')
-       
+
         let c1 = [...point];
         let p1 = [...pre];
         if (!c1[2]) c1[2] = 0;
@@ -276,7 +279,7 @@ function setMenu(marker, coordinates, lnglat) {
         }).then((res) => {
             console.log(res)
         })
-        let line ;
+        let line;
         if (allLines.length == 1) {
             line = allLines[0]
         } else {
@@ -295,23 +298,25 @@ function setMenu(marker, coordinates, lnglat) {
             })
             line = less.line
         }
-       
-        let polyline =  draw1(line);
 
-       
+        let polyline = draw1(line);
+
+
         // hideLoading()
 
         if (type == 'end') {
             marker.setIcon(endIcon)
             marker.setExtData({
-                type: 2,
-                'id': point,
+                ...marker.getExtData(), ...{
+                    type: 2,
+                },
             })
         } else {
             marker.setIcon(defaultIcon1)
             marker.setExtData({
-                type: 0,
-                'id': point,
+                ...marker.getExtData(), ...{
+                    type: 0,
+                },
             })
         }
 

@@ -141,15 +141,15 @@ function _setGeoJson(geoJSON){
     var geojson = new AMap.GeoJSON({
         geoJSON: geoJSON,
         getMarker: (geojson, lnglats) => {
-            if (geojson.properties && geojson.properties.name) {
-                const coordinates = geojson.geometry.coordinates
-                const marker = _marker(geojson.properties.name, lnglats,
-                    defaultIcon0, {
-                        'id': coordinates,
-                    'type': 3 // 0 默认值 1 起点 2 终点
-                });
-                return marker;
-            }
+            // if (geojson.properties && geojson.properties.name) {
+            //     const coordinates = geojson.geometry.coordinates
+            //     const marker = _marker(geojson.properties.name, lnglats,
+            //         defaultIcon0, {
+            //             'id': coordinates,
+            //         'type': 3 // 0 默认值 1 起点 2 终点
+            //     });
+            //     return marker;
+            // }
             return;
         },
         getPolyline: (geojson, lnglats) => {
@@ -185,7 +185,8 @@ function init() {
             _setlayer(geoJSON)
             _setGeoJson(geoJSON);
             console.log('GeoJSON 数据加载完成')
-            start_end(146,160)
+            // start_end(146,160)
+            dqh_wcList()
 
         }),
         fail: ((err) => {

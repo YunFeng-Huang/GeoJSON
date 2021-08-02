@@ -172,7 +172,7 @@ function init() {
     showLoading()
     $.ajax({
         type: "GET",
-        url: 'https://kybcrm-files.oss-cn-hangzhou.aliyuncs.com/prod/tesla/smart-scenic-v2-web/amcharts/1.json',
+        url: 'https://kybcrm-files.oss-cn-hangzhou.aliyuncs.com/prod/tesla/test/yunfeng/map.geojson',
         async: true,
         contentType: "application/json",
         dataType: "json",

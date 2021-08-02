@@ -77,12 +77,12 @@ function getGroup(geoJSON) {
         }
         
     }).filter(Boolean)
-    const marker = _marker('1', [121.655028, 29.732844],
-        defaultIcon0, {
-        'id': [121.655028, 29.732844],
-        'type': 3 // 0 默认值 1 起点 2 终点
-    });
-    map.add(marker);
+    // const marker = _marker('1', [121.655028, 29.732844],
+    //     defaultIcon0, {
+    //     'id': [121.655028, 29.732844],
+    //     'type': 3 // 0 默认值 1 起点 2 终点
+    // });
+    // map.add(marker);
     layer1.setData(lines, {
         lnglat: 'lnglat'
     }).render();

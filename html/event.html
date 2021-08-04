@@ -96,15 +96,16 @@
                     <el-radio-group v-model="form.lineId" @change="_changeRadio">
                         <el-radio :label="item.id" v-for="(item,index) in lineList" ::key="index">{{item.title}}
                         </el-radio>
+                        <el-radio :label="lineId">自定义路线</el-radio>
                     </el-radio-group>
-                    <!-- 
+                    
                     <el-dialog width="80%" :visible.sync="innerVisible" append-to-body>
-                        <iframe :src="`./index.html?form=event&type=${form.lineId}`"></iframe>
+                        <iframe :src="`./index.html?form=event`"></iframe>
                     </el-dialog>
                     <div slot="footer" class="dialog-footer">
                         <el-button @click="outerVisible = false">取 消</el-button>
                         <el-button type="primary" @click="innerVisible = true">打开内层 Dialog</el-button>
-                    </div> -->
+                    </div>
 
 
 
@@ -168,6 +169,7 @@
                     lineList: [],
                     imageUrl: '',
                     id: '',
+                    lineId:-1,
                     form: {
                         lineId: '',
                         signStartTime: '',
@@ -203,7 +205,10 @@
                 },
 
                 _changeRadio() {
-                    this.innerVisible = true;
+                    console.log(this.lineId ,this.form.lineId)
+                    if(this.form.lineId == -1 || this.lineId ==this.form.lineId){
+                        this.innerVisible = true;
+                    }
                 },
                 add() {
                     this.dqh_wcList();
@@ -274,13 +279,15 @@
             },
             mounted() {
                 iframe.listenMsg((v) => {
-                    // console.log(v)
+                    console.log(v)
                     // let arr = v.data.list.reduce((v,k)=>{
                     // return [...v,...k]
                     // },[])
                     // console.log(arr)
 
-                    this.form = {...this.form,...v.data}
+                    // this.form = {...this.form,...v.data}
+                    this.lineId = v.data
+                    this.form.lineId = v.data
                 })
             },
         })

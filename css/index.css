@@ -23,7 +23,7 @@
      transform: translate(-50%, -50%);
      border-radius: 10px;
      padding: 20px;
-     display: none;
+     /* display: none; */
  }
 
  .pop-w {
@@ -97,9 +97,9 @@
  #w {
      position: fixed;
      top: 0;
-     right: 0;
-     width: 200px;
-     height: 200px;
+     left: 0;
+     width: 350px;
+     height: 450px;
      background-color: white;
      z-index: 1111;
      text-align: center;
@@ -107,8 +107,13 @@
  }
 
  #w div {
-     margin-top: 40px;
+     margin-top: 20px;
+     margin-bottom: 20px;
      cursor: pointer;
+ }
+
+ #w div span {
+     padding: 0px 10px;
  }
 
  .active {

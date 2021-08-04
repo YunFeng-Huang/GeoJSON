@@ -26,17 +26,21 @@
     <div id="panel"></div>
     <div id="over" class="over"></div>
     <div id="w" class="input-card">
-        <div class="s1 active">路线规划</div>
-        <div class="s2 ">推荐路线<span style="font-size: 12px;">(选择起点和终点)</span></div>
+        <div>
+            <span class="s1 active">推荐路线</span><span class="s2 ">路线规划</span></div>
+        <iframe src="./setting.html" frameborder="0"></iframe>
     </div>
-    <div class="pop">
+    <!-- <div class="pop">
         <div class="pop-w">
             <iframe src="./setting.html" frameborder="0"></iframe>
         </div>
         <div class="close" onclick="document.querySelector('.pop').style='display:none'">x</div>
-    </div>
+    </div> -->
     <div id="layout" class="layout"><img src="../img/o_31.gif" /></div>
     <div class="input-card" style="width: auto;">
+        <div class="input-item">
+            <button class="btn" onclick="c1()"> 重 置 路 线 </button>
+        </div>
         <div class="input-item">
             <button class="btn" onclick="layer.show()">显示热力图</button>
         </div>
@@ -51,6 +55,7 @@
     </div>
     <script type="text/javascript">
         var heatmap; //热力图
+        
         var userType = getQueryString('type') || 1; // 推荐路线 or 路线规划
         var routerLines = []; //分组
         var lines = []; //所有的线
@@ -63,7 +68,11 @@
         var pointList = []; //所有选中的点
         var nextPolyline = []; // 临时线
         var isPointOnLineValue = 1000 //点位精度
+        var id_s = []; //中途点
+        var userType2Path;
         function _resetMap() {
+            id_s = []
+            userType2Path = []
             markerList && map?.remove(markerList)
             heatmap; //热力图
             userType = 1;
@@ -92,13 +101,13 @@
         let s2 = document.querySelector('.s2');
 
         const c1 = () => {
-
+console.log(1)
             s1.classList.add("active");
             s2.classList.remove("active");
 
             init()
             userType = 1
-
+console.log(12)
         }
         const c2 = () => {
             s2.classList.add("active");
@@ -115,6 +124,44 @@
 
         s1.onclick = c1
         s2.onclick = c2
+
+        iframe.listenMsg((v) => {
+        
+            let _ids = '';
+            let lnglatGaode = [];
+            if (userType == 1) {
+                pointList.map(v => {
+                    lnglatGaode = [...lnglatGaode, ...v?.route];
+                })
+            } else {
+                lnglatGaode = userType2Path;
+            }
+            id_s.map(v => {
+                if (obj.start != v && obj.end != v) {
+                    _ids += `${v},`
+                }
+            })
+
+            dqh_addRecommendWalkRoad({
+                ...{
+                    startId: obj.start,
+                    endId: obj.end,
+                    ids: _ids,
+                    lnglatGaode: JSON.stringify(lnglatGaode),
+                    ifrecommend:getQueryString('form') ?'0':'1'
+                }, ...JSON.parse(v.data)
+            });
+            // let arr = v.data.list.reduce((v,k)=>{
+            // return [...v,...k]
+            // },[])
+            // console.log(arr)
+
+            //   iframe.postMsg({
+            //     startId: start,
+            //     ids: a,
+            //     endId: obj.end
+            //   })
+        })
     </script>
 
 </body>

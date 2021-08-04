@@ -4,6 +4,7 @@ $.ajaxSetup({
     },
     success(res){
         console.log(res)
+        
     },
     fail(err){
         console.log(err)
@@ -23,12 +24,15 @@ function getQueryString(name) {
 
 function fetch(url, data={}, type = 'POST') {
     data = {...data,...{'token': '807BB0364FC5EC081D396599D7D3D4A6'}}
-    for (const key in data) {
-        if (Object.hasOwnProperty.call(data, key)) {
-            const element = data[key];
-            url += `${url.includes('?') ?'&':'?'}${key}=${element}`
+    if (!data['lnglatGaode']){
+        for (const key in data) {
+            if (Object.hasOwnProperty.call(data, key)) {
+                const element = data[key];
+                url += `${url.includes('?') ? '&' : '?'}${key}=${element}`
+            }
         }
     }
+    
     return new Promise((resolve, enject) => {
         $.ajax({
             type: type,
@@ -37,8 +41,15 @@ function fetch(url, data={}, type = 'POST') {
             data: JSON.stringify(data),
             contentType: "application/json",
             dataType: 'json',
-            success: resolve,
-            fail: enject
+            success: (res)=>{
+                if(res.error){
+                    alert(res.error)
+                }
+                resolve(res)
+            },
+            fail: (res)=>{
+                enject(res)
+            }
         });
     })
 }

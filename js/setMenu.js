@@ -29,14 +29,16 @@
                 point: coordinates,
                 polyline: polyline,
                 title: title,
-                id: id
+                id: id,
+                route: _path
             })
         }else{
             pointList.push({
                 point: coordinates,
                 polyline: [],
                 title: title,
-                id: id
+                id: id,
+                route:[]
             })
         }
        

@@ -45,9 +45,10 @@ function dqh_pointLine(id) {
 }
 
 
-let id_s= [];
+
 //起点终点途径点 路径规划
 function start_end(type, obj, id, pointList) {
+
     console.log(pointList,'pointList')
     let ids = '';
     if ( !pointList || pointList.length == 0){
@@ -64,33 +65,29 @@ function start_end(type, obj, id, pointList) {
     }else{
         pointList.map(v=>{
             ids += `${v.id},`
+            id_s.push(v.id)
         })
     }
-    console.log(ids,'ids')
-    
+   
     nextPolyline.map(v => map.remove(v));
-    fetch(`/PCodeClient/api.ashx?cmd=dqh_walkPathPlan&ids=${ids}`).then((res) => {
+    _dqh_walkPathPlan({
+        ids: ids
+    })
+}
+
+
+function _dqh_walkPathPlan(data){
+    fetch(`/PCodeClient/api.ashx?cmd=dqh_walkPathPlan`,data).then((res) => {
         console.log(res, 'res');
         let path = res.msg.ds1[0].lnglatGaode;
         path = JSON.parse(path);
         let _path = path.map(v => [v.lng, v.lat])
         if (!pointList || pointList.length == 0) {
             draw(_path);
-            let a =''
-            id_s.map(v => {
-                a += `${v},`
-            })
-            // document.querySelector('.pop').style = "display:block";
-            iframe.postMsg({
-                startId: start,
-                ids: a,
-                endId:obj.end
-            })
+            userType2Path = _path
         }
-       
     })
 }
-
 function deleteId(v){
     let index = id_s.indexOf(v);
     if (index != -1){
@@ -98,3 +95,28 @@ function deleteId(v){
     }
     console.log(id_s, 'id');
 }
+
+
+// 添加步道推荐路线
+function dqh_addRecommendWalkRoad(data) {
+    fetch(`/PCodeClient/api.ashx?cmd=dqh_addRecommendWalkRoad`, data).then((res) => {
+        showToast('路线添加成功')
+        console.log(res, 'res');
+        if (getQueryString('form')){
+            let id = res.msg.ds1[0].id;
+            iframe.postMsg(id)
+        }
+       
+        // path = JSON.parse(path);
+        // let _path = path.map(v => [v.lng, v.lat])
+        // if (!pointList || pointList.length == 0) {
+        //     draw(_path);
+        //     let a = ''
+        //     id_s.map(v => {
+        //         a += `${v},`
+        //     })
+        // }
+
+    })
+}
+// http://47.99.66.186:9999/PCodeClient/api.ashx?cmd=dqh_addRecommendWalkRoad

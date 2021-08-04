@@ -2,12 +2,6 @@
 
 
 
-var driving = new AMap.Driving({
-    map: map,
-    panel: "panel"
-});
-
-
 
 
 var draw = (path) => {
@@ -170,20 +164,6 @@ function dilution(path) {
 }
 
 
-function start_end(startPointId, endPointId) {
-    fetch(`/PCodeClient/api.ashx?cmd=dqh_walkPathPlan&startPointId=${startPointId}&endPointId=${endPointId}`).then((res) => {
-        console.log(res, 'res');
-        let path = res.msg.ds1[0].lnglatGaode;
-        console.log(JSON.parse(path), 'JSON.parse(path)');
-        path = JSON.parse(path);
-        let _path = path.map(v => [v.lng, v.lat])
-        draw(_path);
-        iframe.postMsg({
-            list: _path
-        })
-    })
-}
-
 function showLoading() {
     document.getElementById("over").style.display = "block";
     document.getElementById("layout").style.display = "block";
@@ -194,30 +174,30 @@ function hideLoading() {
 }
 
 
-function postData(v){
-    console.log(v);
-    var formData = new FormData();
-    formData.append("photo",$("#photo")[0].files[0]);
-    formData.append("service",'App.Passion.UploadFile');
-    // formData.append("token",token);
-    $.ajax({
-        url:'http://www.baidu.com/', /*接口域名地址*/
-        type:'post',
-        data: formData,
-        contentType: false,
-        processData: false,
-        success:function(res){
-            console.log(res.data);
-            if(res.data["code"]=="succ"){
-                alert('成功');
-            }else if(res.data["code"]=="err"){
-                alert('失败');
-            }else{
-                console.log(res);
-            }
-        }
-    })
-}
+// function postData(v){
+//     console.log(v);
+//     var formData = new FormData();
+//     formData.append("photo",$("#photo")[0].files[0]);
+//     formData.append("service",'App.Passion.UploadFile');
+//     // formData.append("token",token);
+//     $.ajax({
+//         url:'http://www.baidu.com/', /*接口域名地址*/
+//         type:'post',
+//         data: formData,
+//         contentType: false,
+//         processData: false,
+//         success:function(res){
+//             console.log(res.data);
+//             if(res.data["code"]=="succ"){
+//                 alert('成功');
+//             }else if(res.data["code"]=="err"){
+//                 alert('失败');
+//             }else{
+//                 console.log(res);
+//             }
+//         }
+//     })
+// }
 
 
 
@@ -228,51 +208,5 @@ function showToast(title = '网路异常，请稍后点击') {
     setTimeout(() => {
         $('.mask').addClass('hide');
     }, 2000)
-}
-
-
-
-
-
-function dqh_wcList(startPointId, endPointId) {
-    dqh_pointLineRlt();
-    fetch(`/PCodeClient/api.ashx?cmd=dqh_wcList`, { types:'主入口,出入口,节岔点'}).then((res) => {
-        console.log(res, 'res');
-        let path = res.msg.ds;
-     const m =    path.map(v=>{
-         v.type_n = v.type;
-         delete v.type;
-         return _marker(v.name, [v.lngGaode, v.latGaode],
-             defaultIcon0, {
-                 ...{
-                     'type': 3 // 0 默认值 1 起点 2 终点
-                 },...v});
-         
-        })
-        map.add(m);
-    })  
-}
-
-
-
-function dqh_pointLineRlt(id) {
-    fetch(`/PCodeClient/api.ashx?cmd=dqh_pointLineRlt`,{
-        id
-    }).then((res) => {
-        console.log(res, 'res');
-        // let path = res.msg.ds;
-        // const m = path.map(v => {
-        //     v.type_n = v.type;
-        //     delete v.type;
-        //     return _marker(v.name, [v.lngGaode, v.latGaode],
-        //         defaultIcon0, {
-        //         ...{
-        //             'type': 3 // 0 默认值 1 起点 2 终点
-        //         }, ...v
-        //     });
-
-        // })
-        // map.add(m);
-    })
 }
 

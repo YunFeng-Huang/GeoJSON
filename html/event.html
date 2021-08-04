@@ -94,9 +94,10 @@
                 </el-form-item>
                 <el-form-item label="选择路线">
                     <el-radio-group v-model="form.lineId" @change="_changeRadio">
-                        <el-radio :label="item.id" v-for="(item,index) in lineList" ::key="index">{{item.title}}</el-radio>
+                        <el-radio :label="item.id" v-for="(item,index) in lineList" ::key="index">{{item.title}}
+                        </el-radio>
                     </el-radio-group>
-<!-- 
+                    <!-- 
                     <el-dialog width="80%" :visible.sync="innerVisible" append-to-body>
                         <iframe :src="`./index.html?form=event&type=${form.lineId}`"></iframe>
                     </el-dialog>
@@ -164,7 +165,7 @@
                     innerVisible: false,
                     dialogVisible: false,
                     tableData: [],
-                    lineList:[],
+                    lineList: [],
                     imageUrl: '',
                     id: '',
                     form: {
@@ -178,24 +179,27 @@
                         content: '',
                         title: '',
                         img: '',
+                        startId:'',
+                        endId:'',
+                        ids:'',
+                        
                     },
-                    route:null
                 };
             },
             methods: {
-                 dqh_wcList(startPointId, endPointId) {
-                fetch(`/PCodeClient/api.ashx?cmd=dqh_recommendWalkRoutes`).then((res) => {
-                console.log(res, 'res');
-                // let path = res.msg.ds1[0].lnglatGaode;
-                // console.log(JSON.parse(path), 'JSON.parse(path)');
-                // path = JSON.parse(path);
-                // let _path = path.map(v => [v.lng, v.lat])
-                // draw(_path);
-                // iframe.postMsg({
-                // list: _path
-                // })
-                    this.lineList = res.msg.ds1;
-                })
+                dqh_wcList(startPointId, endPointId) {
+                    fetch(`/PCodeClient/api.ashx?cmd=dqh_recommendWalkRoutes`).then((res) => {
+                        console.log(res, 'res');
+                        // let path = res.msg.ds1[0].lnglatGaode;
+                        // console.log(JSON.parse(path), 'JSON.parse(path)');
+                        // path = JSON.parse(path);
+                        // let _path = path.map(v => [v.lng, v.lat])
+                        // draw(_path);
+                        // iframe.postMsg({
+                        // list: _path
+                        // })
+                        this.lineList = res.msg.ds1;
+                    })
                 },
 
                 _changeRadio() {
@@ -204,22 +208,22 @@
                 add() {
                     this.dqh_wcList();
                     this.dialogVisible = true;
-                   this.$nextTick(()=>{
+                    this.$nextTick(() => {
                         console.log(this.$refs.form)
                         this.$refs.form?.resetFields();
-                        this.form={
-                        lineId: '',
-                        signStartTime: '',
-                        startTime: '',
-                        endTime: '',
-                        totalNum: '',
-                        awardNum: '',
-                        integral: '',
-                        content: '',
-                        title: '',
-                        img: '',
+                        this.form = {
+                            lineId: '',
+                            signStartTime: '',
+                            startTime: '',
+                            endTime: '',
+                            totalNum: '',
+                            awardNum: '',
+                            integral: '',
+                            content: '',
+                            title: '',
+                            img: '',
                         }
-                   })
+                    })
                 },
                 handleClick(row) {
                     console.log(row);
@@ -252,10 +256,10 @@
 
                     fetch('/PCodeClient/api.ashx?cmd=dqh_creatMatch',
                         this.form).then((res) => {
-                        this.$message.success(res.msg.ds[0].msg)
-                        this.dialogVisible = false;
-                        this.init()
-                    })
+                            this.$message.success(res.msg.ds[0].msg)
+                            this.dialogVisible = false;
+                            this.init()
+                        })
                 },
                 init() {
                     fetch('/PCodeClient/api.ashx?cmd=dqh_matchList')
@@ -266,7 +270,7 @@
             },
             created() {
                 this.init()
-                
+
             },
             mounted() {
                 iframe.listenMsg((v) => {
@@ -276,7 +280,7 @@
                     // },[])
                     // console.log(arr)
 
-                    this.route = v.data.list
+                    this.form = {...this.form,...v.data}
                 })
             },
         })

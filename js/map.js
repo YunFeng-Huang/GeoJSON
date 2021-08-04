@@ -15,22 +15,6 @@ var map = new AMap.Map('container', {
 });
 
 
-var ridingOption = {
-    map: map,
-    panel: "panel",
-    policy: 2,
-    isOutline: true,
-    outlineColor: '#ffeeee',
-    autoFitView: false,
-    hideMarkers: true
-
-}
-var riding = new AMap.Riding(ridingOption)
- //构造路线导航类
- var driving = new AMap.Driving({
-    map: map,
-    panel: "panel"
-}); 
 
 // 创建一个 Icon
 var startIcon = new AMap.Icon({
@@ -185,7 +169,7 @@ function init() {
             _setlayer(geoJSON)
             _setGeoJson(geoJSON);
             console.log('GeoJSON 数据加载完成')
-            // start_end(146,160)
+            //  start_end(146,160)
             dqh_wcList()
 
         }),

@@ -13,6 +13,17 @@
 
  }
 
+ /* #app{
+    height: 100%;
+} */
+ .el-main {
+     padding: 0;
+ }
+
+ iframe {
+     border: 0;
+ }
+
  .pop {
      position: fixed;
      background: white;
@@ -94,6 +105,11 @@
      text-align: center;
  }
 
+ .input-card.d2 {
+     top: 1rem;
+     bottom: auto;
+ }
+
  #w {
      position: fixed;
      top: 0;
@@ -104,6 +120,7 @@
      z-index: 1111;
      text-align: center;
      top: 0;
+     display: none;
  }
 
  #w div {

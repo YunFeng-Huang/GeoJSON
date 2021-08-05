@@ -1,0 +1,178 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <link rel="stylesheet" href="../css/index.css" />
+    <script src="https://unpkg.com/gcoord/dist/gcoord.js"></script>
+    <title>步道</title>
+    <script
+        src="https://webapi.amap.com/maps?v=1.4.11&key=19b6ffb41d6c37ad488f0d57088e2ebd&plugin=AMap.Riding,AMap.Driving,AMap.Walking">
+        </script>
+    <script src="https://webapi.amap.com/loca?v=1.3.2&key=19b6ffb41d6c37ad488f0d57088e2ebd"></script>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/ajax.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/iframeMsg.js"></script>
+</head>
+
+<body>
+
+    <div id="container"></div>
+    <div id="panel"></div>
+    <div id="over" class="over"></div>
+    <div id="w" class="input-card">
+        <!-- <div> -->
+            <!-- <span class="s1 active">推荐路线</span><span class="s2 ">路线规划</span></div> -->
+        <iframe src="./setting.html" frameborder="0"></iframe>
+    </div>
+    <!-- <div class="pop">
+        <div class="pop-w">
+            <iframe src="./setting.html" frameborder="0"></iframe>
+        </div>
+        <div class="close" onclick="document.querySelector('.pop').style='display:none'">x</div>
+    </div> -->
+    <div id="layout" class="layout"><img src="../img/o_31.gif" /></div>
+    <div class="input-card" style="width: auto;">
+        
+        <div class="input-item">
+            <button class="btn" onclick="layer.show()">显示热力图</button>
+        </div>
+        <div class="input-item">
+            <button class="btn" onclick="layer.hide()">关闭热力图</button>
+        </div>
+    </div>
+     <div class="input-card d2" style="width: auto;">
+        <div class="input-item">
+            <button class="btn" onclick="c1()">重置路线</button>
+        </div>
+         <div class="input-item">
+             <button class="btn s1" onclick="c1()">推荐路线</button>
+         </div>
+         <div class="input-item">
+             <button class="btn s2" onclick="c2()">路线规划</button>
+         </div>
+     </div>
+    <div class="mask hide">
+        <div class="mask_box">
+            系统提示
+        </div>
+    </div>
+    <script type="text/javascript">
+        var heatmap; //热力图
+        
+        var userType = getQueryString('type') || 1; // 推荐路线 or 路线规划
+        var routerLines = []; //分组
+        var lines = []; //所有的线
+        var markerList = []; //所有的岔路口
+        var selectLine = []; //选中的线
+        var obj = {
+            start: '',
+            end: '',
+        } //起点终点
+        var pointList = []; //所有选中的点
+        var nextPolyline = []; // 临时线
+        var isPointOnLineValue = 1000 //点位精度
+        var id_s = []; //中途点
+        var userType2Path;
+        function _resetMap() {
+            id_s = []
+            userType2Path = []
+            markerList && map?.remove(markerList)
+            heatmap; //热力图
+            userType = 1;
+            routerLines = []; //分组
+            lines = []; //所有的线
+            markerList = []; //所有的岔路口
+            selectLine = [];
+            obj = {
+                start: '',
+                end: '',
+            }
+            pointList = [];
+            nextPolyline = [];
+            isPointOnLineValue = 30
+
+            map?.clearMap()
+        }
+
+    </script>
+    <script src="../js/map.js"></script>
+    <script src="../js/com.js"></script>
+    <script src="../js/setMenu.js"></script>
+    <script src="../js/heatmap.js"></script>
+    <script>
+        let s1 = document.querySelector('.s1');
+        let s2 = document.querySelector('.s2');
+
+        const c1 = () => {
+
+            s1.classList.add("active");
+            s2.classList.remove("active");
+
+            init()
+            userType = 1
+
+        }
+        const c2 = () => {
+            s2.classList.add("active");
+            s1.classList.remove("active");
+            init()
+            userType = 2
+
+        }
+        if (userType == 1) {
+            c1()
+        } else {
+            c2()
+        }
+
+        // s1.onclick = c1
+        // s2.onclick = c2
+
+        iframe.listenMsg((v) => {
+        
+            let _ids = '';
+            let lnglatGaode = [];
+            if (userType == 1) {
+                pointList.map(v => {
+                    lnglatGaode = [...lnglatGaode, ...v?.route];
+                })
+            } else {
+                lnglatGaode = userType2Path;
+            }
+            id_s.map(v => {
+                if (obj.start != v && obj.end != v) {
+                    _ids += `${v},`
+                }
+            })
+
+            dqh_addRecommendWalkRoad({
+                ...{
+                    startId: obj.start,
+                    endId: obj.end,
+                    ids: _ids,
+                    lnglatGaode: JSON.stringify(lnglatGaode),
+                    ifrecommend:getQueryString('form') ?'0':'1'
+                }, ...JSON.parse(v.data)
+            });
+            // let arr = v.data.list.reduce((v,k)=>{
+            // return [...v,...k]
+            // },[])
+            // console.log(arr)
+
+            //   iframe.postMsg({
+            //     startId: start,
+            //     ids: a,
+            //     endId: obj.end
+            //   })
+        })
+    </script>
+
+</body>
+
+</html>

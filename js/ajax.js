@@ -13,6 +13,7 @@ $.ajaxSetup({
 let urlHost = 'http://47.99.66.186:9999'
 
 function getQueryString(name) {
+    console.log(window)
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
     var r = window.location.search.substr(1).match(reg);
     if (r != null) {
@@ -23,7 +24,7 @@ function getQueryString(name) {
 
 
 function fetch(url, data={}, type = 'POST') {
-    data = {...data,...{'token': '807BB0364FC5EC081D396599D7D3D4A6'}}
+    data = { ...data, ...{ 'token': sessionStorage.token ??  '55978EF76E8266FE809BFAA462F7DD19'}}
     if (!data['lnglatGaode']){
         for (const key in data) {
             if (Object.hasOwnProperty.call(data, key)) {

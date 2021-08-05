@@ -152,6 +152,7 @@ function _setGeoJson(geoJSON){
 
 
 function init() {
+    document.querySelector('#w').style = "display:none";
     _resetMap()
     showLoading()
     $.ajax({

@@ -110,6 +110,7 @@
                    
                }
                start_end('end', obj, id, pointList)
+               document.querySelector('#w').style = "display:block";
             }, 1);
 
         type != 3 && userType == 1 && contextMenu.addItem("移除该锚点",

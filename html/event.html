@@ -87,7 +87,7 @@
 
 
 
-        <el-dialog title="添加" :visible.sync="dialogVisible" size="tiny">
+        <el-dialog title="添加" :visible.sync="dialogVisible" size="tiny" @close="init()">
             <el-form ref="form" label-position="left" label-width="180px" :model="form">
                 <el-form-item label="赛事标题">
                     <el-input v-model="form.title" style="width: 300px;"></el-input>
@@ -100,7 +100,7 @@
                     </el-radio-group>
                     
                     <el-dialog width="80%" :visible.sync="innerVisible" append-to-body>
-                        <iframe :src="`./index.html?form=event`"></iframe>
+                        <iframe :src="`./map.html?form=event`"></iframe>
                     </el-dialog>
                     <div slot="footer" class="dialog-footer">
                         <el-button @click="outerVisible = false">取 消</el-button>
@@ -188,6 +188,7 @@
                     },
                 };
             },
+           
             methods: {
                 dqh_wcList(startPointId, endPointId) {
                     fetch(`/PCodeClient/api.ashx?cmd=dqh_recommendWalkRoutes`).then((res) => {

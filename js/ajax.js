@@ -24,7 +24,7 @@ function getQueryString(name) {
 
 
 function fetch(url, data={}, type = 'POST') {
-    data = { ...data, ...{ 'token': sessionStorage.token ??  '55978EF76E8266FE809BFAA462F7DD19'}}
+    data = { ...data, ...{ 'token': sessionStorage.token }}
     if (!data['lnglatGaode']){
         for (const key in data) {
             if (Object.hasOwnProperty.call(data, key)) {

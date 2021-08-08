@@ -61,7 +61,7 @@
             created() {
               let token = getQueryString('token') ;
               console.log(token,'token');
-              sessionStorage.token = token;
+              sessionStorage.token = token || '55978EF76E8266FE809BFAA462F7DD19';
             },
         };
         const app = Vue.createApp(App);

@@ -210,7 +210,7 @@ function setMenu(marker, coordinates, lnglat) {
         if (!p1[2]) p1[2] = 0;
         c1[3] = title
         p1[3] = lastp.title
-        fetch('api/admin/point/addRlt', {
+        fetch('https://47.99.183.98:8090/api/admin/point/addRlt', {
             "manPoint": c1,
             "subPoint": p1,
             "lines": allLines,

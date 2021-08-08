@@ -25,7 +25,7 @@ function fetch(url, data, type = 'POST') {
     return new Promise((resolve, enject) => {
         $.ajax({
             type: type,
-            url: urlHost + url,
+            url:  url,
             async: true,
             data: JSON.stringify(data),
             contentType: "application/json",

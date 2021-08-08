@@ -16,23 +16,6 @@ var map = new AMap.Map('container', {
 
 
 
-var ridingOption = {
-    map: map,
-    panel: "panel",
-    policy: 2,
-    isOutline: true,
-    outlineColor: '#ffeeee',
-    autoFitView: false,
-    hideMarkers: true
-
-}
-var riding = new AMap.Riding(ridingOption)
- //构造路线导航类
- var driving = new AMap.Driving({
-    map: map,
-    panel: "panel"
-}); 
-
 // 创建一个 Icon
 var startIcon = new AMap.Icon({
     // 图标尺寸
@@ -142,15 +125,15 @@ function _setGeoJson(geoJSON){
     var geojson = new AMap.GeoJSON({
         geoJSON: geoJSON,
         getMarker: (geojson, lnglats) => {
-            if (geojson.properties && geojson.properties.name) {
-                const coordinates = geojson.geometry.coordinates
-                const marker = _marker(geojson.properties.name, lnglats,
-                    defaultIcon0, {
-                    'id': lnglats,
-                    'type': 3 // 0 默认值 1 起点 2 终点
-                });
-                return marker;
-            }
+            // if (geojson.properties && geojson.properties.name) {
+            //     const coordinates = geojson.geometry.coordinates
+            //     const marker = _marker(geojson.properties.name, lnglats,
+            //         defaultIcon0, {
+            //             'id': coordinates,
+            //         'type': 3 // 0 默认值 1 起点 2 终点
+            //     });
+            //     return marker;
+            // }
             return;
         },
         getPolyline: (geojson, lnglats) => {
@@ -169,26 +152,34 @@ function _setGeoJson(geoJSON){
 
 
 function init() {
+    document.querySelector('#w').style = "display:none";
     _resetMap()
     showLoading()
     $.ajax({
         type: "GET",
-        url: 'https://kybcrm-files.oss-cn-hangzhou.aliyuncs.com/prod/tesla/smart-scenic-v2-web/amcharts/1.json',
+        url: 'https://kybcrm-files.oss-cn-hangzhou.aliyuncs.com/prod/tesla/test/yunfeng/map.geojson',
         async: true,
         contentType: "application/json",
         dataType: "json",
         success: ((res) => {
             let geoJSON = { ...res }
             gcoord.transform(geoJSON, gcoord.WGS84, gcoord.GCJ02);
-            console.log(geoJSON.features, 'geoJSON.features');
+            // console.log(geoJSON.features, 'geoJSON.features');
             getGroup(geoJSON);
             hideLoading();
             _setlayer(geoJSON)
             _setGeoJson(geoJSON);
             console.log('GeoJSON 数据加载完成')
+            //  start_end(146,160)
+            // dqh_wcList()
+
         }),
         fail: ((err) => {
             console.log(err)
         })
     });
+
+    
 }
+
+

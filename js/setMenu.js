@@ -3,7 +3,8 @@
     let {
         type,
         id,
-        title
+        title,
+        isEnable
     } = marker.getExtData()
     console.log(userType,'userType');
     console.log(marker.getExtData(), 'marker.getExtData()');
@@ -22,15 +23,13 @@
             console.log(item, 'item')
             let p = JSON.parse(item.lnglat);
             let _path = p.map(v => [+v.lng, +v.lat])
-
             let polyline = draw1(_path);
-
             pointList.push({
                 point: coordinates,
                 polyline: polyline,
                 title: title,
                 id: id,
-                route: _path
+                route: p
             })
         }else{
             pointList.push({
@@ -133,14 +132,21 @@
                 reset()
             }, 1);
 
-        // contextMenu.addItem("设置",
-        //     () => {
-        //         document.querySelector('.pop').style="display:block";
-        //     }, 1);
+     
 
 
 
     }
+     contextMenu.addItem(`${isEnable ?'设置为':'取消'}打卡点`,
+         () => {
+             marker.setExtData({
+                 ...marker.getExtData(), ...{
+                     isEnable: !isEnable,
+                 },
+             })
+             showToast('操作成功')
+        // document.querySelector('.pop').style="display:block";
+    }, 1);
     contextMenu.open(map, lnglat);
 
 var draw1 = (path) => {

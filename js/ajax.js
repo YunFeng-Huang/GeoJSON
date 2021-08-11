@@ -2,11 +2,11 @@ $.ajaxSetup({
     headers: {
         // 'token': getQueryString('token')
     },
-    success(res){
+    success(res) {
         console.log(res)
-        
+
     },
-    fail(err){
+    fail(err) {
         console.log(err)
     }
 });
@@ -23,32 +23,43 @@ function getQueryString(name) {
 }
 
 
-function fetch(url, data={}, type = 'POST') {
-    data = { ...data, ...{ 'token': sessionStorage.token }}
-    if (!data['lnglatGaode']){
+function fetch(url, data = {}, type = 'POST') {
+    data = { ...data, ...{ 'token': sessionStorage.token } }
+    let _isFormData = data['lnglatGaode'];
+    if (!_isFormData) {
         for (const key in data) {
             if (Object.hasOwnProperty.call(data, key)) {
                 const element = data[key];
                 url += `${url.includes('?') ? '&' : '?'}${key}=${element}`
             }
         }
+    } else {
+        var _data = new FormData();
+        for (const key in data) {
+            if (Object.hasOwnProperty.call(data, key)) {
+                const element = data[key];
+                _data.append(key, element);
+            }
+        }
+        data = _data;
     }
-    
+
     return new Promise((resolve, enject) => {
         $.ajax({
             type: type,
-            url: url.includes('http')?url:( urlHost + url),
+            url: url.includes('http') ? url : (urlHost + url),
             async: true,
-            data: JSON.stringify(data),
-            contentType: "application/json",
+            data: _isFormData ? data : JSON.stringify(data),
             dataType: 'json',
-            success: (res)=>{
-                if(res.error){
+            processData: false,
+            contentType: _isFormData ? "multipart/form-data" : "application/json",
+            success: (res) => {
+                if (res.error) {
                     alert(res.error)
                 }
                 resolve(res)
             },
-            fail: (res)=>{
+            fail: (res) => {
                 enject(res)
             }
         });

@@ -4,7 +4,7 @@
         type,
         id,
         title,
-        isEnable
+        is_punch
     } = marker.getExtData()
     console.log(userType,'userType');
     console.log(marker.getExtData(), 'marker.getExtData()');
@@ -137,14 +137,18 @@
 
 
     }
-     contextMenu.addItem(`${isEnable ?'设置为':'取消'}打卡点`,
+     contextMenu.addItem(`${is_punch==0 ?'设置为':'取消'}打卡点`,
          () => {
+             let data ={
+                 id:id,
+                 isPunch: is_punch==0?1:0,
+             }
+             dqh_addRecommendWalkRoad(data);
              marker.setExtData({
                  ...marker.getExtData(), ...{
-                     isEnable: !isEnable,
+                     is_punch: is_punch == 0 ? 1 : 0,
                  },
              })
-             showToast('操作成功')
         // document.querySelector('.pop').style="display:block";
     }, 1);
     contextMenu.open(map, lnglat);

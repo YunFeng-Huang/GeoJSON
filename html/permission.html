@@ -122,10 +122,9 @@
         },
         handleClick(e){
           console.log(e,'e');
-          fetch(`/PCodeClient/api.ashx?cmd=dqh_matchPermissions`,{mobile:e.Mobile,integral:e.integral,enable:e.permissions==0?1:0,}).then((res)=>
+          fetch(`/PCodeClient/api.ashx?cmd=dqh_matchPermissions`,{id:e.id,integral:e.integral,enable:e.permissions==0?1:0,}).then((res)=>
           {
-          // this.lineList = res.msg.ds1;
-           this.dqh_permissionsList();
+           this.dqh_permissionsList(this.mobile);
           })
         },
         submit() {

@@ -122,10 +122,9 @@ function dqh_addRecommendWalkRoad(data) {
 
 
 
-// 添加步道推荐路线
-function dqh_addRecommendWalkRoad(data) {
+function dqh_punchSetting(data) {
     fetch(`/PCodeClient/api.ashx?cmd=dqh_punchSetting`,data).then((res) => {
-        showToast('打卡成功')
+        // showToast('打卡成功')
     })
 }
 

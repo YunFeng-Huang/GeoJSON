@@ -143,7 +143,7 @@
                  id:id,
                  isPunch: is_punch==0?1:0,
              }
-             dqh_addRecommendWalkRoad(data);
+             dqh_punchSetting(data);
              marker.setExtData({
                  ...marker.getExtData(), ...{
                      is_punch: is_punch == 0 ? 1 : 0,

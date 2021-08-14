@@ -56,6 +56,7 @@
                 })
                 reset()
                 obj.start = id;
+                activePath = null;
                 if (userType == 1) {
                     _Addpoint()
                     dqh_pointLine(id);

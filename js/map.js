@@ -321,9 +321,6 @@ function init() {
             console.log('GeoJSON 数据加载完成')
             //  start_end(146,160)
             dqh_wcList()
-
-        
-
         }),
         fail: ((err) => {
             console.log(err)

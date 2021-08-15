@@ -55,7 +55,7 @@ function fetch(url, data = {}, type = 'POST') {
             contentType: _isFormData ? "multipart/form-data" : "application/json",
             success: (res) => {
                 if (res.error) {
-                    alert(res.error)
+                   return alert(res.error)
                 }
                 resolve(res)
             },

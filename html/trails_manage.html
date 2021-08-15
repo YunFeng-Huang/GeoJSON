@@ -1,0 +1,222 @@
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <script src="https://unpkg.com/vue@next"></script>
+  <!-- import CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/element-plus/lib/theme-chalk/index.css">
+  <!-- import JavaScript -->
+  <script src="https://unpkg.com/element-plus/lib/index.full.js"></script>
+  <script src="../js/jquery-3.3.1.min.js"></script>
+  <script src="../js/ajax.js"></script>
+  <title>步道团队</title>
+  <style>
+    .el-upload--picture-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    html {
+      width: 100%;
+      height: 100%;
+    }
+
+    template {
+      display: block;
+    }
+
+    #app {
+      padding: 20px;
+    }
+  </style>
+  <style>
+    .avatar-uploader .el-upload {
+      border: 1px dashed #d9d9d9;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+      border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+      font-size: 28px;
+      color: #8c939d;
+      width: 178px;
+      height: 178px;
+      line-height: 178px;
+      text-align: center;
+    }
+
+    .avatar {
+      width: 178px;
+      height: 178px;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <el-form :inline="true" class="demo-form-inline">
+      <el-form-item label="队伍名称">
+        <el-input v-model="name" placeholder="请输入队伍名称"></el-input>
+      </el-form-item>
+      <el-select v-model="state" placeholder="审核状态">
+        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+        </el-option>
+      </el-select>
+      <el-form-item style="margin-left:20px;">
+        <el-button type="primary" @click="onSubmit">查询</el-button>
+      </el-form-item>
+    </el-form>
+    <el-table :data="tableData" style="width:100%">
+      <el-table-column prop="createtime" label="时间" width="300">
+      </el-table-column>
+      <el-table-column prop="name" label="团队名称" width="250">
+      </el-table-column>
+      <el-table-column prop="state" label="状态" width="180">
+      </el-table-column>
+      <el-table-column prop="Reason" label="不通过原因" width="300">
+      </el-table-column>
+
+      <el-table-column label="操作">
+        <template #default="scope">
+          <el-button type="text" @click="handleClick(scope.row)" size="small">
+            审核
+          </el-button>
+        </template>
+      </el-table-column>
+
+
+    </el-table>
+<el-dialog title="提示" v-model="dialogVisible" width="30%">
+  <el-radio-group v-model="radio">
+    <el-radio label="0">待审核</el-radio>
+    <el-radio label="1">审核通过</el-radio>
+    <el-radio label="2">审核不通过</el-radio>
+  </el-radio-group>
+  <el-input v-if="radio=='2'" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入内容" style="margin-top: 20px;"
+    v-model="textarea">
+  </el-input>
+  <template #footer>
+    <span class="dialog-footer">
+      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="sure">确 定</el-button>
+    </span>
+  </template>
+</el-dialog>
+    <!-- <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4"
+    :page-sizes="[10, 20, 30, 40]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
+  </el-pagination> -->
+  </div>
+  <script>
+    const App = {
+      data() {
+        return {
+          tableData: [],
+          total: 0,
+          pageSize: 10,
+          currentPage: 1,
+          name: '',
+          state: '',
+          options: [{
+            value: '',
+            label: '全部'
+          }, {
+            value: '0',
+            label: '待审核'
+          }, {
+            value: '1',
+            label: '审核通过'
+          }, {
+            value: '2',
+            label: '审核不通过'
+          }],
+          dialogVisible:false,
+          item:null,
+          radio:'',
+          textarea:''
+        };
+      },
+      created() {
+        // this.id = getQueryString('id')
+        this.WalkFleet();
+      },
+      methods: {
+        stateMap(value,type=true){
+          let map =type ?{
+            '0':'待审核',
+            '1':'审核通过',
+            '2':'审核不通过',
+          }:{
+          '待审核':'0',
+          '审核通过':'1',
+          '审核不通过':'2',
+          }
+          return map[value]??''
+        },
+        onSubmit() {
+          this.WalkFleet();
+        },
+        handleSizeChange(val) {
+          console.log(`每页 ${val} 条`);
+          this.pageSize = val;
+        },
+        handleCurrentChange(val) {
+          console.log(`当前页: ${val}`);
+          this.currentPage = val;
+        },
+        WalkFleet() {
+          fetch(`/PCodeClient/api.ashx?cmd=dqh_walkFleet`, {
+            name: this.name,
+            state: this.stateMap(this.state)
+          }).then((res) => {
+            this.tableData = res.msg.ds;
+          })
+        },
+        handleClick(e) {
+          console.log(e, 'e');
+          this.item = e;
+          this.radio = this.stateMap(e.state,false);
+          this.textarea = e.textarea;
+          this.dialogVisible = true;
+        },
+        sure(){
+          fetch(`/PCodeClient/api.ashx?cmd=dqh_walkFleet_sh`, {
+            id:this.item.id,
+            state: this.stateMap(this.radio),
+            reason: this.textarea ?? '',
+          }).then((res) => {
+            this.WalkFleet();
+            this.dialogVisible = false;
+          })
+        },
+        submit() {
+          let params = {
+            ...this.form,
+            ...{
+              'token': '807BB0364FC5EC081D396599D7D3D4A6',
+              'lineId': 'id'
+            }
+          }
+          fetch(
+            '/PCodeClient/api.ashx?cmd=dqh_permissionsList', params
+          )
+        }
+
+      }
+    };
+    const app = Vue.createApp(App);
+    app.use(ElementPlus);
+    app.mount("#app");
+  </script>
+
+</body>
+
+</html>

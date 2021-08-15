@@ -141,7 +141,12 @@
             let lnglatGaode = [];
             if (userType == 1) {
                 pointList.map(v => {
-                    lnglatGaode = [...lnglatGaode, ...v?.route];
+                    let route = v?.route
+                    if(!AMap.GeometryUtil.isPointOnLine(route[0], lnglatGaode, isPointOnLineValue)){
+                        route.reverse();
+                    }
+                    lnglatGaode = [...lnglatGaode, ...route];
+
                 })
             } else {
                 lnglatGaode = userType2Path;

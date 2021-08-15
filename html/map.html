@@ -151,12 +151,15 @@
                     _ids += `${v},`
                 }
             })
-
+            console.log(lnglatGaode)
+            let dis = AMap.GeometryUtil.distanceOfLine(lnglatGaode.map(v=>[+v.lng,+v.lat]));
+            console.log(dis,'dis')
             dqh_addRecommendWalkRoad({
                 ...{
                     startId: obj.start,
                     endId: obj.end,
                     ids: _ids,
+                    distance:dis,
                     lnglatGaode: JSON.stringify(lnglatGaode),
                     ifrecommend:getQueryString('form') ?'0':'1'
                 }, ...JSON.parse(v.data)

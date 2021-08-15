@@ -163,7 +163,7 @@ function init() {
         dataType: "json",
         success: ((res) => {
             let geoJSON = { ...res }
-            gcoord.transform(geoJSON, gcoord.WGS84, gcoord.GCJ02);
+            gcoord.transform(geoJSON, gcoord.WGS84, gcoord.AMap);
             geoJSON.features.push(Feature_line_1)
             getGroup(geoJSON);
             hideLoading();

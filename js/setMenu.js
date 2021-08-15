@@ -68,7 +68,7 @@
         //     document.querySelector('.pop').style="display:block";
         // }, 1);
     } else {
-        type != 0 && (userType == 1 || (userType == 2 && obj.end != '')) && contextMenu.addItem("设置为经过点",
+        (userType == 1 || (userType == 2 && obj.end != '')) && contextMenu.addItem("设置为经过点",
               () => {
 
                 console.log(selectLine,'selectLine')
@@ -83,12 +83,21 @@
                 }else{
                     if (obj.end != '') start_end('', obj, id)
                 }
-                marker.setIcon(defaultIcon1)
-                marker.setExtData({
-                    ...marker.getExtData(), ...{
-                        type: 0,
-                    },
-                })
+                  console.log(id , obj.start);
+                  if (id == obj.start){
+                      _marker('途经点', id,
+                          defaultIcon1, marker.getExtData());
+
+                  }else{
+                      marker.setIcon(defaultIcon1)
+                      marker.setExtData({
+                          ...marker.getExtData(), ...{
+                              type: 0,
+                          },
+                      })
+                  }
+                 
+               
             }, 1);
 
         type != 2 && !obj.end && contextMenu.addItem(

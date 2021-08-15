@@ -22,6 +22,23 @@ var draw = (path) => {
 
 
 
+var drawRoute1 = (path) => {
+    let _path = path.map(v => [+v.lng, +v.lat])
+    let Polyline = new AMap.Polyline({
+        path: _path,
+        isOutline: true,
+        outlineColor: '#ffeeee',
+        borderWeight: 2,
+        strokeWeight: 5,
+        strokeColor: '#00ad3a',
+        strokeOpacity: 0.9,
+        // lineJoin: 'round'
+    })
+    map.add(Polyline);
+}
+
+
+
 
 
 

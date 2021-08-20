@@ -91,12 +91,12 @@ var _marker = (title, position, icon, extData) => {
     marker.setLabel({
         offset: new AMap.Pixel(-24, -26), //设置文本标注偏移量
         content: title, //设置文本标注内容
-        direction: 'right' //设置文本标注方位
+        direction: 'right' //设置文本标注方位1
     });
     AMap.event.addListener(marker, 'click', (e) => {
         setMenu(marker, position, e.lnglat);
     });
-    // type 0默认点  1起点 2终点 3 经过点 4 分支点
+    // type 0默认点  1起点 2终点 3 经过点 4 分支点 
 
     return marker;
 }

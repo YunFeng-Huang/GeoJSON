@@ -10,7 +10,8 @@ $.ajaxSetup({
         console.log(err)
     }
 });
-let urlHost = 'http://47.99.66.186:9999'
+let urlHost = 'http://47.99.66.186:18801'
+// let urlHost = 'http://47.99.66.186:9999'
 
 function getQueryString(name) {
     console.log(window)

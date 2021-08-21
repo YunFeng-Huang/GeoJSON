@@ -52,7 +52,7 @@ function fetch(url, data = {}, type = 'POST') {
             data: _isFormData ? data : JSON.stringify(data),
             dataType: 'json',
             processData: false,
-            contentType: _isFormData ? "multipart/form-data" : "application/json",
+            contentType: _isFormData ?  false: "application/json",
             success: (res) => {
                 if (res.error) {
                    return alert(res.error)

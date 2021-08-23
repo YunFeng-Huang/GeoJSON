@@ -102,8 +102,8 @@ function dqh_addRecommendWalkRoad(data) {
     if (!data.title){
         return showToast('请添加标题');
     }
-    fetch(`/PCodeClient/api.ashx?cmd=dqh_addRecommendWalkRoad`, data).then((res) => {
-        showToast(`路线添加${res.msg.ds[0].msg}`);
+    fetch(`/PCodeClient/api.ashx?cmd=${getQueryString('form') == 'line' ? 'dqh_updateRecommendWalkRoad' : 'dqh_addRecommendWalkRoad'}`, data).then((res) => {
+        showToast(`路线添加${res.msg.ds[0].msg??'成功'}`);
         if (getQueryString('form')){
             let id = res.msg.ds1[0].id;
             iframe.postMsg(id)

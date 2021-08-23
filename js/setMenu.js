@@ -1,5 +1,6 @@
 
  function setMenu(marker, coordinates, lnglat)  {
+    //  if (from == 'line'&&disabled) return;
     let {
         type,
         id,
@@ -21,16 +22,18 @@
                 return v.man_point_id == id || v.sub_point_id == id;
             })[0]
             console.log(item, 'item')
-            let p = JSON.parse(item.lnglat);
-            let _path = p.map(v => [+v.lng, +v.lat])
-            let polyline = draw1(_path);
-            pointList.push({
-                point: coordinates,
-                polyline: polyline,
-                title: title,
-                id: id,
-                route: p
-            })
+            if (item){
+                let p = JSON.parse(item.lnglat);
+                let _path = p.map(v => [+v.lng, +v.lat])
+                let polyline = draw1(_path);
+                pointList.push({
+                    point: coordinates,
+                    polyline: polyline,
+                    title: title,
+                    id: id,
+                    route: p
+                })
+            }
         }else{
             pointList.push({
                 point: coordinates,
@@ -43,6 +46,7 @@
        
 
     }
+     console.log(obj,'obj');
     if (!obj.start) {
         contextMenu.addItem(
             "设置为起点",
@@ -70,10 +74,8 @@
     } else {
         (userType == 1 || (userType == 2 && obj.end != '')) && contextMenu.addItem("设置为经过点",
               () => {
-
-                console.log(selectLine,'selectLine')
                 if (userType == 1) {
-                    if (!selectLine.some(path => AMap.GeometryUtil.isPointOnLine(coordinates, path, isPointOnLineValue))) {
+                    if (!selectLine.some(path => AMap.GeometryUtil.isPointOnLine(coordinates, path, 1000))) {
                         alert('请选择线路关联的节点');
                         return;
                     };
@@ -105,20 +107,28 @@
            async () => {
                 let r = true;
                 if (userType == 1) r = confirm("确定设置为终点，点击确定生成路线");
-                marker.setIcon(endIcon)
-                marker.setExtData({
-                    ...marker.getExtData(), ...{
-                        type: 2,
-                    },
-                })
-                obj.end = id;
-               if (userType == 1){
+                if(!r)return;
+               console.log(selectLine,'selectLine');
+               if (userType == 1) {
+                   if (!selectLine.some(path => AMap.GeometryUtil.isPointOnLine(coordinates, path, isPointOnLineValue))) {
+                       alert('请选择线路关联的节点');
+                       return;
+                   };
                    _Addpoint()
-               }else{
-                //    dqh_pointLine(id);
-                   
+               } else {
+                   //    dqh_pointLine(id);
+
                }
+               obj.end = id;
+               marker.setIcon(endIcon)
+               marker.setExtData({
+                   ...marker.getExtData(), ...{
+                       type: 2,
+                   },
+               })
+              
                start_end('end', obj, id, pointList)
+               document.querySelector('#w iframe').src = iframeSrc;
                document.querySelector('#w').style = "display:block";
             }, 1);
 

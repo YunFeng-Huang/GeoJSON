@@ -9,6 +9,8 @@
   <!-- import JavaScript -->
   <script src="https://unpkg.com/element-plus/lib/index.full.js"></script>
   <script src="../js/iframeMsg.js"></script>
+      <script src="../js/jquery-3.3.1.min.js"></script>
+      <script src="../js/ajax.js"></script>
   <title>设置</title>
   <style>
     .el-upload--picture-card {
@@ -94,6 +96,16 @@
           imageUrl:''
         };
       },
+      mounted() {
+           this.$nextTick(()=>{
+             var item = getQueryString('item');
+             var value = JSON.parse(item);
+             if(value){
+              this.form = {...this.form,...value}
+              this.imageUrl = oss+ value.fengmian;
+             }
+           })
+      },
       methods: {
         handleAvatarSuccess(res, file) {
           this.form.fengmian = res.src;
@@ -124,7 +136,6 @@
         },
         submit() {
            iframe.postMsg(JSON.stringify(this.form))
-          
         }
 
       }

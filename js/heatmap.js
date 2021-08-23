@@ -4,7 +4,7 @@ var layer = new Loca.HeatmapLayer({
     visible:false
 }).setOptions({
     style: {
-        radius: 16,
+        radius: 8,
         color: {
             0.5: "blue",
             0.65: "rgb(117,211,248)",

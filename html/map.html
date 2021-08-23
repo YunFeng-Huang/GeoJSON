@@ -28,7 +28,7 @@
     <div id="over" class="over"></div>
     <div id="w" class="input-card">
         <!-- <div> -->
-            <!-- <span class="s1 active">推荐路线</span><span class="s2 ">路线规划</span></div> -->
+        <!-- <span class="s1 active">推荐路线</span><span class="s2 ">路线规划</span></div> -->
         <iframe src="./setting.html" frameborder="0"></iframe>
     </div>
     <!-- <div class="pop">
@@ -39,7 +39,7 @@
     </div> -->
     <div id="layout" class="layout"><img src="../img/o_31.gif" /></div>
     <div class="input-card" style="width: auto;">
-        
+
         <div class="input-item">
             <button class="btn" onclick="layer.show()">显示热力图</button>
         </div>
@@ -47,17 +47,17 @@
             <button class="btn" onclick="layer.hide()">关闭热力图</button>
         </div>
     </div>
-     <div class="input-card d2" style="width: auto;">
+    <div class="input-card d2" style="width: auto;">
         <div class="input-item">
-            <button class="btn" onclick="c1()">重置路线</button>
+            <button class="btn" onclick="c1(true);">重置路线</button>
         </div>
-         <div class="input-item">
-             <button class="btn s1" onclick="c1()">推荐路线</button>
-         </div>
-         <div class="input-item">
-             <button class="btn s2" onclick="c2()">路线规划</button>
-         </div>
-     </div>
+        <div class="input-item">
+            <button class="btn s1" onclick="c1(true);">推荐路线</button>
+        </div>
+        <div class="input-item">
+            <button class="btn s2" onclick="c2(true);">路线规划</button>
+        </div>
+    </div>
     <div class="mask hide">
         <div class="mask_box">
             系统提示
@@ -65,7 +65,7 @@
     </div>
     <script type="text/javascript">
         var heatmap; //热力图
-        
+
         var userType = getQueryString('type') || 1; // 推荐路线 or 路线规划
         var routerLines = []; //分组
         var lines = []; //所有的线
@@ -80,6 +80,9 @@
         var isPointOnLineValue = 1000 //点位精度
         var id_s = []; //中途点
         var userType2Path;
+        var from;
+        var disabled = false;
+        var iframeSrc = '';
         function _resetMap() {
             id_s = []
             userType2Path = []
@@ -110,39 +113,68 @@
         let s1 = document.querySelector('.s1');
         let s2 = document.querySelector('.s2');
 
-        const c1 = () => {
-
+        const c1 = (v) => {
             s1.classList.add("active");
             s2.classList.remove("active");
-
             init()
             userType = 1
-
+            disabled=v??false;
         }
-        const c2 = () => {
+        const c2 = (v) => {
             s2.classList.add("active");
             s1.classList.remove("active");
             init()
             userType = 2
-
+            disabled=v??false;
         }
-        if (userType == 1) {
-            c1()
-        } else {
-            c2()
+        window.onload = () => {
+            if (userType == 1) {
+                c1()
+            } else {
+                c2()
+            }
+            iframeSrc = `./setting.html`;
+            from = getQueryString('form');
+            if (getQueryString('form') == 'line') {
+                var item = getQueryString('item');
+                var value = JSON.parse(item);
+                console.log(value, 'value');
+                let path = value.lnglatGaode;
+                path = JSON.parse(path);
+                let _path = path.map(v => [v.lng, v.lat])
+                draw(_path);
+                let start = _path[0];
+                let end = _path[_path.length - 1];
+                // setTimeout(() => {
+                //     const startMarker = _marker(``, start,
+                //         startIcon, {
+                //         'id': start,
+                //         'type': 1 // 0 默认值 1 起点 2 终点
+                //     });
+                //     const endMarker = _marker(``, end,
+                //         endIcon, {
+                //         'id': end,
+                //         'type': 2 // 0 默认值 1 起点 2 终点
+                //     });
+                //     markerList = [startMarker, endMarker]
+                //     map.add([startMarker, endMarker]);
+                // }, 1000)
+                iframeSrc = `./setting.html?item=${item}`;
+                document.querySelector('#w iframe').src = iframeSrc;
+                document.querySelector('#w').style = "display:block";
+            }
         }
 
         // s1.onclick = c1
         // s2.onclick = c2
 
         iframe.listenMsg((v) => {
-        
             let _ids = '';
             let lnglatGaode = [];
             if (userType == 1) {
                 pointList.map(v => {
                     let route = v?.route
-                    if(!AMap.GeometryUtil.isPointOnLine(route[0], lnglatGaode, isPointOnLineValue)){
+                    if (!AMap.GeometryUtil.isPointOnLine(route[0], lnglatGaode, isPointOnLineValue)) {
                         route.reverse();
                     }
                     lnglatGaode = [...lnglatGaode, ...route];
@@ -157,18 +189,40 @@
                 }
             })
             console.log(lnglatGaode)
-            let dis = AMap.GeometryUtil.distanceOfLine(lnglatGaode.map(v=>[+v.lng,+v.lat]));
-            console.log(dis,'dis')
-            dqh_addRecommendWalkRoad({
-                ...{
+            let dis = AMap.GeometryUtil.distanceOfLine(lnglatGaode.map(v => [+v.lng, +v.lat]));
+            console.log(dis, 'dis')
+            let params = {
+                ...JSON.parse(v.data), ...{
                     startId: obj.start,
                     endId: obj.end,
                     ids: _ids,
-                    distance:dis,
+                    distance: dis,
                     lnglatGaode: JSON.stringify(lnglatGaode),
-                    ifrecommend:getQueryString('form') ?'0':'1'
-                }, ...JSON.parse(v.data)
-            });
+                    ifrecommend:  getQueryString('form') == 'event' ? '0' : '1'
+                }
+            }
+            console.log(disabled,'disabled')
+            if (getQueryString('form') == 'line') {
+                let data = {
+                startId: obj.start,
+                endId: obj.end,
+                ids: _ids,
+                distance: dis,
+                lnglatGaode: JSON.stringify(lnglatGaode),
+                ifrecommend: JSON.parse(getQueryString('item')).ifrecommend
+                }
+                if (!disabled) {
+                    params = {
+                        ...data, ...JSON.parse(v.data)
+                    }
+                } else {
+                    params = {
+                        ...JSON.parse(v.data),
+                        ...data
+                    }
+                }
+            }
+            dqh_addRecommendWalkRoad(params);
             // let arr = v.data.list.reduce((v,k)=>{
             // return [...v,...k]
             // },[])

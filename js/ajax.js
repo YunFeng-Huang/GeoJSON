@@ -10,8 +10,8 @@ $.ajaxSetup({
         console.log(err)
     }
 });
-let urlHost = 'http://47.99.66.186:18801';
-// let urlHost = location.href.includes('http') ? 'http://47.99.66.186:18801' : 'http://47.99.66.186:9999';
+// let urlHost = 'http://47.99.66.186:18801';
+let urlHost = location.href.includes('http') ? 'http://47.99.66.186:18801' : 'http://47.99.66.186:9999';
 var oss = 'http://qixing.dqhtravel.com';
 function getQueryString(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");

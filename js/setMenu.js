@@ -51,6 +51,7 @@
         contextMenu.addItem(
             "设置为起点",
            async () => {
+               disabled = true;
                 console.log("设置为起点", marker)
                 marker.setIcon(startIcon)
                 marker.setExtData({
@@ -126,7 +127,6 @@
                        type: 2,
                    },
                })
-              
                start_end('end', obj, id, pointList)
                document.querySelector('#w iframe').src = iframeSrc;
                document.querySelector('#w').style = "display:block";

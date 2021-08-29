@@ -97,7 +97,7 @@
                 </el-form-item>
                 <el-form-item label="选择路线">
                     <el-radio-group v-model="form.lineId" @change="_changeRadio">
-                        <el-radio :label="item.id" v-for="(item,index) in lineList" ::key="index">{{item.title}}
+                        <el-radio :label="item.id" v-for="(item,index) in lineList" ::key="index" style="margin-bottom:10px">{{item.title}}
                         </el-radio>
                         <el-radio :label="lineId">自定义路线</el-radio>
                     </el-radio-group>

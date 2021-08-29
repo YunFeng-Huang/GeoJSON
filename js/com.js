@@ -112,8 +112,24 @@ function getGroup(geoJSON) {
 //     console.timeEnd()
     // console.log(lines, 'linesde');
    
- 
+    // let start = {
+    //     "lng": "121.68270509962966",
+    //     "lat": "29.795477148903554"
+    // }
+    // let end = {
+    //     "lng": "121.68270509962966",
+    //     "lat": "29.795477148903554"
+    // }
    
+    // map.add([_marker(`startMarker`, [start.lng, start.lat],
+    //     startIcon, {
+    //     'id': [start.lng, start.lat],
+    //     'type': 1 // 0 默认值 1 起点 2 终点
+    // }), _marker(`endMarker`, [end.lng, end.lat],
+    //     endIcon, {
+    //     'id': [end.lng, end.lat],
+    //     'type': 2 // 0 默认值 1 起点 2 终点
+    // })]);
 
 }
 

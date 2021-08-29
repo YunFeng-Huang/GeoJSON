@@ -77,7 +77,7 @@
         } //起点终点
         var pointList = []; //所有选中的点
         var nextPolyline = []; // 临时线
-        var isPointOnLineValue = 1000 //点位精度
+        var isPointOnLineValue = 30 //点位精度
         var id_s = []; //中途点
         var userType2Path;
         var from;
@@ -174,9 +174,9 @@
             if (userType == 1) {
                 pointList.map(v => {
                     let route = v?.route
-                    if (!AMap.GeometryUtil.isPointOnLine(route[0], lnglatGaode, isPointOnLineValue)) {
-                        route.reverse();
-                    }
+                    // if (!AMap.GeometryUtil.isPointOnLine(route[0], lnglatGaode, isPointOnLineValue)) {
+                    //     route.reverse();
+                    // }
                     lnglatGaode = [...lnglatGaode, ...route];
 
                 })

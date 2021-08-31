@@ -10,10 +10,11 @@
     <link rel="stylesheet" href="../css/index.css" />
     <title>步道</title>
     <script
-        src="https://webapi.amap.com/maps?v=1.4.11&key=19b6ffb41d6c37ad488f0d57088e2ebd&plugin=AMap.Riding,AMap.Driving,AMap.Walking">
+        src="https://webapi.amap.com/maps?v=1.4.11&key=19b6ffb41d6c37ad488f0d57088e2ebd&plugin=AMap.Riding,AMap.Driving,AMap.Walking,AMap.CircleEditor">
         </script>
     <script src="https://webapi.amap.com/loca?v=1.3.2&key=19b6ffb41d6c37ad488f0d57088e2ebd"></script>
     <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+    
     <script src="../js/jquery-3.3.1.min.js"></script>
     <script src="../js/ajax.js"></script>
     <script src="../js/api.js"></script>
@@ -83,7 +84,9 @@
         var from;
         var disabled = false;
         var iframeSrc = '';
+          var circleEditor;
         function _resetMap() {
+            circleEditor=null;
             id_s = []
             userType2Path = []
             markerList && map?.remove(markerList)

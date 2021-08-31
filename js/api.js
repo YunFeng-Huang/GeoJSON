@@ -126,7 +126,8 @@ function dqh_addRecommendWalkRoad(data) {
 
 function dqh_punchSetting(data) {
     fetch(`/PCodeClient/api.ashx?cmd=dqh_punchSetting`,data).then((res) => {
-        // showToast('打卡成功')
+        // let str = data.is_punch == 0?'取消':'设置';
+        // showToast(`${str}成功`)
     })
 }
 

@@ -80,6 +80,12 @@ var defaultIcon0 = new AMap.Icon({
 
 var _marker = (title, position, icon, extData) => {
     extData.title = title;
+    if (extData.is_punch == 1){
+        let circle = SetCircle(position,extData.radius)
+        extData.circle = circle;
+        extData.circleEditor = new AMap.CircleEditor(map, circle) ;
+    }
+    
     let marker = new AMap.Marker({
         // content: title,
         title: title,
@@ -100,6 +106,30 @@ var _marker = (title, position, icon, extData) => {
 
     return marker;
 }
+
+const SetCircle = (point, radius)=>{
+    let circle = new AMap.Circle({
+        center: point,
+        radius: radius, //半径
+        borderWeight: 3,
+        strokeColor: "#FF33FF",
+        strokeOpacity: 1,
+        strokeWeight: 6,
+        strokeOpacity: 0.2,
+        fillOpacity: 0.4,
+        strokeStyle: 'dashed',
+        strokeDasharray: [10, 10],
+        // 线样式还支持 'dashed'
+        fillColor: '#1791fc',
+        zIndex: 50,
+    })
+    circle.setMap(map)
+    circle.clear =()=>{
+        map.remove(circle);
+    }
+    return circle;
+}
+
 
 
 function drawRoute(route) {

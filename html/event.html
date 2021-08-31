@@ -58,9 +58,10 @@
             height: 178px;
             display: block;
         }
-         #app{
-         padding: 20px;
-         }
+
+        #app {
+            padding: 20px;
+        }
     </style>
 </head>
 
@@ -97,15 +98,16 @@
                 </el-form-item>
                 <el-form-item label="选择路线">
                     <el-radio-group v-model="form.lineId" @change="_changeRadio">
-                        <el-radio :label="item.id" v-for="(item,index) in lineList" ::key="index" style="margin-bottom:10px">{{item.title}}
+                        <el-radio :label="item.id" v-for="(item,index) in lineList" ::key="index"
+                            style="margin-bottom:10px">{{item.title}}
                         </el-radio>
                         <el-radio :label="lineId">自定义路线</el-radio>
                     </el-radio-group>
-                    
+
                     <el-dialog width="80%" :visible.sync="innerVisible" append-to-body>
                         <iframe :src="`./map.html?form=event`"></iframe>
                     </el-dialog>
-<!--                     
+                    <!--                     
                     <div slot="footer" class="dialog-footer">
                         <el-button @click="outerVisible = false">取 消</el-button>
                         <el-button type="primary" @click="innerVisible = true">打开内层 Dialog</el-button>
@@ -119,11 +121,11 @@
                         value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间" default-time="12:00:00">
                     </el-date-picker>
                 </el-form-item>
- <el-form-item label="报名结束时间">
-     <el-date-picker v-model="form.signEndTime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"
-         type="datetime" placeholder="选择日期时间" default-time="12:00:00">
-     </el-date-picker>
- </el-form-item>
+                <el-form-item label="报名结束时间">
+                    <el-date-picker v-model="form.signEndTime" format="yyyy-MM-dd HH:mm:ss"
+                        value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间" default-time="12:00:00">
+                    </el-date-picker>
+                </el-form-item>
                 <el-form-item label="比赛开始时间">
                     <el-date-picker v-model="form.startTime" type="datetime" format="yyyy-MM-dd HH:mm:ss"
                         value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间" default-time="12:00:00">
@@ -177,7 +179,7 @@
                     lineList: [],
                     imageUrl: '',
                     id: '',
-                    lineId:-1,
+                    lineId: -1,
                     form: {
                         lineId: '',
                         signStartTime: '',
@@ -189,14 +191,14 @@
                         content: '',
                         title: '',
                         img: '',
-                        startId:'',
-                        endId:'',
-                        ids:'',
-                        signEndTime:''
+                        startId: '',
+                        endId: '',
+                        ids: '',
+                        signEndTime: ''
                     },
                 };
             },
-           
+
             methods: {
                 dqh_wcList(startPointId, endPointId) {
                     fetch(`/PCodeClient/api.ashx?cmd=dqh_recommendWalkRoutes`).then((res) => {
@@ -214,8 +216,8 @@
                 },
 
                 _changeRadio() {
-                    console.log(this.lineId ,this.form.lineId)
-                    if(this.form.lineId == -1 || this.lineId ==this.form.lineId){
+                    console.log(this.lineId, this.form.lineId)
+                    if (this.form.lineId == -1 || this.lineId == this.form.lineId) {
                         this.innerVisible = true;
                     }
                 },
@@ -236,7 +238,7 @@
                             content: '',
                             title: '',
                             img: '',
-                            signEndTime:''
+                            signEndTime: ''
                         }
                     })
                 },

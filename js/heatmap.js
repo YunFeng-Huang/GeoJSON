@@ -1,7 +1,6 @@
 
 var layer = new Loca.HeatmapLayer({
     map: map,
-    visible:false
 }).setOptions({
     style: {
         radius: 16,
@@ -15,19 +14,32 @@ var layer = new Loca.HeatmapLayer({
     },
 });
 function _setlayer(geoJSON){
-    let filter_features = geoJSON.features.filter(v => {
+    let all = geoJSON.features.filter(e => e.properties.name).filter(v => {
         v.height = 0;
         if (v.geometry.coordinates && !Array.isArray(v.geometry.coordinates[0])) {
             v.height = v.geometry.coordinates[2] || 0;
         }
         return v.geometry.type == 'Point';
+    }).map(v=>{
+        const coordinates = v.geometry.coordinates;
+        const name = v.properties.name;
+        return _marker(`${name}--${v.height}`, coordinates,
+            defaultIcon0, {
+            'id': coordinates,
+            'type': 0 // 0 默认值 1 起点 2 终点
+        });
     })
+    console.log(all,'all');
+    // layer.setData(filter_features, {
+    //     lnglat: (data) => {
+    //         const coordinates = data.value.geometry.coordinates;
+    //         return [coordinates[0], coordinates[1]];
+    //     },
+    //     value: "height",
+    // }).render();
 
-    layer.setData(filter_features, {
-        lnglat: (data) => {
-            const coordinates = data.value.geometry.coordinates;
-            return [coordinates[0], coordinates[1]];
-        },
-        value: "height",
-    }).render();
+  
+   
+    // markerList = [startMarker, ...markerList, endMarker]
+    map.add(all);
 }

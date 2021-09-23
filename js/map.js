@@ -157,7 +157,7 @@ function init() {
     showLoading()
     $.ajax({
         type: "GET",
-        url: 'https://kybcrm-files.oss-cn-hangzhou.aliyuncs.com/prod/tesla/test/yunfeng/map.geojson',
+        url: '../1/1-2.json',
         async: true,
         contentType: "application/json",
         dataType: "json",

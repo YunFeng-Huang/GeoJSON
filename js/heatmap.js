@@ -14,16 +14,17 @@ var layer = new Loca.HeatmapLayer({
     },
 });
 function _setlayer(geoJSON){
-    let all = geoJSON.features.filter(e => e.properties.name).filter(v => {
+    console.log(geoJSON,'geoJSON');
+    let all = geoJSON.features.filter((v,i) => {
         v.height = 0;
         if (v.geometry.coordinates && !Array.isArray(v.geometry.coordinates[0])) {
             v.height = v.geometry.coordinates[2] || 0;
         }
-        return v.geometry.type == 'Point';
+        return v.geometry.type == 'Point' && i%100==0;
     }).map(v=>{
         const coordinates = v.geometry.coordinates;
         const name = v.properties.name;
-        return _marker(`${name}--${v.height}`, coordinates,
+        return _marker(`${v.height}`, coordinates,
             defaultIcon0, {
             'id': coordinates,
             'type': 0 // 0 默认值 1 起点 2 终点

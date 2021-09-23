@@ -157,7 +157,7 @@ function init() {
     showLoading()
     $.ajax({
         type: "GET",
-        url: '../1/1-2.json',
+        url: '../1.json',
         async: true,
         contentType: "application/json",
         dataType: "json",

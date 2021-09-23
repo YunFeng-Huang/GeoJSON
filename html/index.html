@@ -37,6 +37,7 @@
             </el-container>
         </el-container>
     </div>
+        <script src="https://unpkg.com/element-plus@1.1.0-beta.8/dist/locale/zh-cn.js"></script>
     <script>
         const App = {
             data() {
@@ -67,6 +68,11 @@
                             name: '步道团队',
                             route: './trails_manage.html',
                         },
+                        {
+                        index: '1-5',
+                        name: '打卡记录',
+                        route: './cardRecord.html',
+                        },
                     ]
                     // 
                 };
@@ -78,7 +84,10 @@
             },
         };
         const app = Vue.createApp(App);
-        app.use(ElementPlus);
+        // app.use(ElementPlus);
+         app.use(ElementPlus, {
+         locale: ElementPlus.lang.zhCn
+         })
         app.mount("#app");
     </script>
 </body>

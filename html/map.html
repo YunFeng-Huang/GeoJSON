@@ -113,6 +113,9 @@
     <script src="../js/setMenu.js"></script>
     <script src="../js/heatmap.js"></script>
     <script>
+
+        
+
         let s1 = document.querySelector('.s1');
         let s2 = document.querySelector('.s2');
 
@@ -130,6 +133,7 @@
             userType = 2
             disabled=v??false;
         }
+        let ifrecommend ;
         window.onload = () => {
             if (userType == 1) {
                 c1()
@@ -139,32 +143,22 @@
             iframeSrc = `./setting.html`;
             from = getQueryString('form');
             if (getQueryString('form') == 'line') {
-                var item = getQueryString('item');
-                var value = JSON.parse(item);
-                console.log(value, 'value');
-                let path = value.lnglatGaode;
-                path = JSON.parse(path);
-                let _path = path.map(v => [v.lng, v.lat])
-                draw(_path);
-                let start = _path[0];
-                let end = _path[_path.length - 1];
-                // setTimeout(() => {
-                //     const startMarker = _marker(``, start,
-                //         startIcon, {
-                //         'id': start,
-                //         'type': 1 // 0 默认值 1 起点 2 终点
-                //     });
-                //     const endMarker = _marker(``, end,
-                //         endIcon, {
-                //         'id': end,
-                //         'type': 2 // 0 默认值 1 起点 2 终点
-                //     });
-                //     markerList = [startMarker, endMarker]
-                //     map.add([startMarker, endMarker]);
-                // }, 1000)
-                iframeSrc = `./setting.html?item=${item}`;
-                document.querySelector('#w iframe').src = iframeSrc;
-                document.querySelector('#w').style = "display:block";
+                var id = getQueryString('id');
+                dqh_roadInfo(id).then((v)=>{
+                    var value = v.msg.ds1[0];
+                    console.log(value, 'value');
+                    let path = value.lnglatGaode;
+                    path = JSON.parse(path);
+                    let _path = path.map(v => [v.lng, v.lat])
+                    draw(_path);
+                    let start = _path[0];
+                    let end = _path[_path.length - 1];
+                    iframeSrc = `./setting.html?id=${value.id}`;
+                    document.querySelector('#w iframe').src = iframeSrc;
+                    document.querySelector('#w').style = "display:block";
+                    ifrecommend = value.ifrecommend
+                })
+                
             }
         }
 
@@ -212,7 +206,7 @@
                 ids: _ids,
                 distance: dis,
                 lnglatGaode: JSON.stringify(lnglatGaode),
-                ifrecommend: JSON.parse(getQueryString('item')).ifrecommend
+                ifrecommend: ifrecommend
                 }
                 if (!disabled) {
                     params = {

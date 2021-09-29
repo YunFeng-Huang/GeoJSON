@@ -9,8 +9,9 @@
   <!-- import JavaScript -->
   <script src="https://unpkg.com/element-plus@1.0.2-beta.71/lib/index.full.js"></script>
   <script src="../js/iframeMsg.js"></script>
-      <script src="../js/jquery-3.3.1.min.js"></script>
-      <script src="../js/ajax.js"></script>
+  <script src="../js/jquery-3.3.1.min.js"></script>
+  <script src="../js/ajax.js"></script>
+  <script src="../js/api.js"></script>
   <title>设置</title>
   <style>
     .el-upload--picture-card {
@@ -97,12 +98,17 @@
         };
       },
       mounted() {
+        
+       
            this.$nextTick(()=>{
-             var item = getQueryString('item');
-             var value = JSON.parse(item);
-             if(value){
-              this.form = {...this.form,...value}
-              this.imageUrl = oss+ value.fengmian;
+             let id = getQueryString('id');
+             if(id){
+              dqh_roadInfo(id).then((v)=>{
+                var value = v.msg.ds1[0];
+                this.form = {...this.form,...value}
+                this.imageUrl = oss+ value.fengmian;
+                console.log(this.form,'this.form');
+              })
              }
            })
       },

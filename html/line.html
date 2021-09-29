@@ -10,6 +10,7 @@
   <script src="https://unpkg.com/element-plus@1.0.2-beta.71/lib/index.full.js"></script>
   <script src="../js/jquery-3.3.1.min.js"></script>
   <script src="../js/ajax.js"></script>
+   <script src="../js/iframeMsg.js"></script>
   <title>路线管理</title>
   <style>
      .el-upload--picture-card {
@@ -115,7 +116,7 @@
 
     </el-table>
     <el-dialog width="80%" v-model="dialogVisible" @close="dqh_RecommendWalkRoad()">
-      <iframe :src="`./map.html?form=line&item=${item}`"></iframe>
+      <iframe :src="`./map.html?form=line&id=${item.id}`"></iframe>
     </el-dialog>
 <!-- <el-dialog title="提示" v-model="dialogVisible" width="30%">
   <el-radio-group v-model="radio">
@@ -204,7 +205,7 @@
           })
         },
         handleClick(e) {
-          this.item = JSON.stringify(e);
+          this.item = e;
           this.dialogVisible = true;
         },
         handleDelete(e){

@@ -3,7 +3,7 @@
 // 各类型点位列表接口 点位查询
 function dqh_wcList(startPointId, endPointId) {
 
-    fetch(`/PCodeClient/api.ashx?cmd=dqh_wcList`, { types: '主入口,出入口,节岔点' }).then((res) => {
+    fetch(`/PCodeClient/api.ashx?cmd=dqh_wcList`, { types: '步道口' }).then((res) => {
         console.log(res, 'res');
         let path = res.msg.ds;
         const m = path.map(v => {
@@ -103,11 +103,12 @@ function dqh_addRecommendWalkRoad(data) {
         return showToast('请添加标题');
     }
     fetch(`/PCodeClient/api.ashx?cmd=${getQueryString('form') == 'line' ? 'dqh_updateRecommendWalkRoad' : 'dqh_addRecommendWalkRoad'}`, data).then((res) => {
-        showToast(`路线添加${res.msg.ds[0].msg??'成功'}`);
-        if (getQueryString('form')){
+        showToast(`路线添加${res.msg.ds[0]?.msg??'成功'}`);
+        if (getQueryString('form') != 'line'){
             let id = res.msg.ds1[0].id;
             iframe.postMsg(id)
         }
+      
        
         // path = JSON.parse(path);
         // let _path = path.map(v => [v.lng, v.lat])
@@ -122,6 +123,10 @@ function dqh_addRecommendWalkRoad(data) {
     })
 }
 
+// 添加步道推荐路线
+function dqh_roadInfo(lineId) {
+  return  fetch(`/PCodeClient/api.ashx?cmd=dqh_roadInfo`, { lineId: lineId})
+}
 
 
 function dqh_punchSetting(data) {

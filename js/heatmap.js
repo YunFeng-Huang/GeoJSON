@@ -28,16 +28,23 @@ function _setlayer(geoJSON){
             'type': 0 // 0 默认值 1 起点 2 终点
         });
     })
-    // layer.setData(filter_features, {
-    //     lnglat: (data) => {
-    //         const coordinates = data.value.geometry.coordinates;
-    //         return [coordinates[0], coordinates[1]];
-    //     },
-    //     value: "height",
-    // }).render();
+    map.add(all);
+}
 
-  
-   
-    // markerList = [startMarker, ...markerList, endMarker]
+function _setlayer1(geoJSON) {
+    let all = geoJSON.features.filter((v, i) => {
+        v.height = 0;
+        if (v.geometry.coordinates && !Array.isArray(v.geometry.coordinates[0])) {
+            v.height = v.geometry.coordinates[2] || 0;
+        }
+        return v.geometry.type == 'Point' ;
+    }).map(v => {
+        const coordinates = v.geometry.coordinates;
+        return _marker(`${v.height}`, coordinates,
+            defaultIcon2, {
+            'id': coordinates,
+            'type': 0 // 0 默认值 1 起点 2 终点
+        });
+    })
     map.add(all);
 }

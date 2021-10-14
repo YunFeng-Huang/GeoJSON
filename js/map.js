@@ -170,6 +170,7 @@ function init() {
             _setlayer(geoJSON)
             _setGeoJson(geoJSON);
             console.log('GeoJSON 数据加载完成')
+            _point1();
             //  start_end(146,160)
             // dqh_wcList()
 
@@ -183,3 +184,31 @@ function init() {
 }
 
 
+function _point1(){
+    $.ajax({
+        type: "GET",
+        url: '../1/map.geojson',
+        async: true,
+        contentType: "application/json",
+        dataType: "json",
+        success: ((res) => {
+            let geoJSON = { ...res }
+            gcoord.transform(geoJSON, gcoord.WGS84, gcoord.GCJ02);
+            console.log(geoJSON.features, 'geoJSON.features');
+            _setlayer1(geoJSON)
+            // getGroup(geoJSON);
+            // const endMarker = _marker(``, coordinates[coordinates.length -
+            //     1],
+            //     defaultIcon0, {
+            //     'id': coordinates[coordinates.length -
+            //         1],
+            //     'type': 3 // 0 默认值 1 起点 2 终点
+            // });
+            // // markerList = [startMarker, ...markerList, endMarker]
+            // map.add([startMarker, endMarker]);
+        }),
+        fail: ((err) => {
+            console.log(err)
+        })
+    });
+}

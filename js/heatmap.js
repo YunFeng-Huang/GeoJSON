@@ -19,7 +19,8 @@ function _setlayer(geoJSON){
         if (v.geometry.coordinates && !Array.isArray(v.geometry.coordinates[0])) {
             v.height = v.geometry.coordinates[2] || 0;
         }
-        return v.geometry.type == 'Point' && i%100==0;
+        //  && i % 100 == 0
+        return v.geometry.type == 'Point';
     }).map(v=>{
         const coordinates = v.geometry.coordinates;
         return _marker(`${v.height}`, coordinates,

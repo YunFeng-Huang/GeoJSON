@@ -157,7 +157,7 @@ function init() {
     showLoading()
     $.ajax({
         type: "GET",
-        url: '../1.json',
+        url: '../1/n_map.geojson',
         async: true,
         contentType: "application/json",
         dataType: "json",
